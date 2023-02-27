@@ -1,0 +1,10 @@
+center map area
+figur out how to get both the map and cards to fit on screen
+make the cards one sprite sheet (possibly per item)
+track a larger map maybe?
+	possible metamap with numbers to track which room you are in and what sub map to pull from
+make the cards come from a deck
+	make the cards disaper after use
+	have a redraw hand card always in hand
+make inventory system
+	tie cards to an item
