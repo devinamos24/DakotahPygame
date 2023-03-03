@@ -7,7 +7,7 @@ def game_start(current_dir):
     pygame.init()
 
     # Join the current directory with the filename of the tileset image
-    tileset_image_path = os.path.join(current_dir, "game/res/tileset.png")
+    tileset_image_path = os.path.join(current_dir, "../resources/tileset.png")
 
     # Load the tileset image
     tileset_image = pygame.image.load(tileset_image_path)

@@ -1,11 +1,18 @@
+from ..entities import Entity
+from ..environment import World
 from enum import IntEnum, unique
 from sys import stderr
 from typing import List
-
 import pygame
 
 IMAGES_FORMAT = ".png"
-RESOURCE_PATH = "/res"
+RESOURCE_PATH = "../resources"
+
+
+class GraphicsComponent:
+
+    def update(self, entity: Entity, world: World) -> None:
+        pass
 
 
 @unique
@@ -53,6 +60,3 @@ def load_textures() -> List[pygame.Surface]:
             print(pygame.get_error(), file=stderr)
             exit(-1)
     return load_sprite_sheet() + surfaces
-
-
-textures = load_textures()

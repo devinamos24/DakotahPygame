@@ -96,9 +96,9 @@ while running:
     screen.blit(tiles[2], (player_x * tile_width, player_y * tile_height))
 
     # Create a list to store the images of the cards in the hand
-    hand = [pygame.image.load(os.path.join(current_dir, "game/res/rook_card.png")), pygame.image.load(os.path.join(current_dir,
-                                                                                                              "game/res/bishop_card.png")), pygame.image.load(os.path.join(current_dir,
-                                                                                                                                                                           "game/res/knight_card.png"))]
+    hand = [pygame.image.load(os.path.join(current_dir, "../resources/rook_card.png")), pygame.image.load(os.path.join(current_dir,
+                                                                                                                       "../resources/bishop_card.png")), pygame.image.load(os.path.join(current_dir,
+                                                                                                                                                                                        "../resources/knight_card.png"))]
     
     # Get the width and height of a single card
     card_width = hand[0].get_width()
