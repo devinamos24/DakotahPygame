@@ -16,10 +16,13 @@ class World:
 
         self.SmartObjects = self.DumbObjects.copy()
 
-    def draw_dumb_objects(self):
+    def update(self):
+        pass
+
+    def draw(self, screen):
         for y, row in enumerate(self.DumbObjects):
             for x, tile_id in enumerate(row):
-                gfxengine.draw_on_grid(tile_id, x, y)
+                gfxengine.draw_on_grid(screen, tile_id, x, y)
 
     def generate_floor(self):
         self.DumbObjects.clear()
