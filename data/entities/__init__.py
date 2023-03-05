@@ -1,1 +1,1 @@
-from data.entities.entity_base import Entity
+from data.entities.actor import Actor

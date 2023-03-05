@@ -6,7 +6,6 @@ from typing import Union, List
 import pygame
 
 IMAGES_FORMAT = ".png"
-RESOURCE_PATH = "../resources/"
 SCREEN_RESOLUTION = (640, 640)
 TILE_SIDES = 32
 

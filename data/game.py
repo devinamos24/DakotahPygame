@@ -11,7 +11,7 @@ class Game:
 
     def startup(self):
         self.world = World()
-        self.world.generate_floor()
+        self.world.generate_world()
 
     def update(self):
         self.world.update()

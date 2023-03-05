@@ -1,6 +1,6 @@
-from ..entities import Entity
+from ..entities import Actor
 from ..environment import World
 
 class GraphicComponent:
-    def update(self, entity: Entity, world: World) -> None:
+    def update(self, entity: Actor, world: World) -> None:
         pass
