@@ -2,6 +2,7 @@ from enum import IntEnum
 from data.engine import gfxengine
 from data.engine.gfxengine import TextureIndices
 from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     from data.entities.input_handler import _InputHandler
     from data.environment.level import Level
@@ -12,6 +13,11 @@ class Direction(IntEnum):
     east = 2
     south = 3
     west = 4
+
+
+"""
+An actor is anything that can move around and interact with the world/level including the player
+"""
 
 
 class _Actor:
@@ -25,6 +31,7 @@ class _Actor:
         self.level = level
         self.input_handler = input_handler
 
+    # TODO make a list of move throughable dumb objects and store a move throughable boolean on smart objects and check that
     def check_valid_move(self, x, y) -> bool:
         if self.level.DumbObjects[y][x] != TextureIndices.wall:
             if self.level.SmartObjects[y][x] is None:
@@ -48,7 +55,6 @@ class _Actor:
             self.level.move_buffer.append((self.x, self.y, new_x, new_y))
             self.x = new_x
             self.y = new_y
-
 
     def update(self, events):
         action = self.input_handler.handle_input(events)
