@@ -1,6 +1,6 @@
 import pygame.display
 
-from data.environment import World
+from data.environment.world import World
 from . import setup
 
 
@@ -13,8 +13,8 @@ class Game:
         self.world = World()
         self.world.generate_world()
 
-    def update(self):
-        self.world.update()
+    def update(self, events):
+        self.world.update(events)
 
     def draw(self):
         self.world.draw(self.screen)

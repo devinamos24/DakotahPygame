@@ -10,11 +10,12 @@ if __name__ == "__main__":
 
     running = True
     while running:
-        for event in pygame.event.get():
+        events = pygame.event.get()
+        for event in events:
             if event.type == pygame.QUIT:
                 running = False
 
-        game.update()
+        game.update(events)
         game.draw()
         pygame.display.update()
 
