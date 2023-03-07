@@ -31,8 +31,10 @@
 	- health
 	- mini map
 - meta map
+	- https://github.com/munificent/rooms-and-mazes
 - door connection to rooms
 - enemies
+	- https://github.com/munificent/a-turn-based-game-loop
 - enemy card/actions
 - enemy AI
 - inventory system
@@ -42,6 +44,8 @@
 
 ## **to be looked at later:**
 - autotiler
+	- https://github.com/vladantrhlik/pygame-autotile
+	- https://v3x3d.itch.io/demonic-dungeon
 - item room per floor
 - action que
 - item/card rarity
