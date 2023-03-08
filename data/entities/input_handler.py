@@ -26,6 +26,5 @@ class PlayerInputHandler(_InputHandler):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key in list(self.bindings.keys()):
-                    print(event)
                     return self.bindings[event.key]
         return None
