@@ -1,14 +1,20 @@
 import random
+
+import pygame
+
 from ..engine import gfxengine
 from ..engine.gfxengine import TextureIndices
+from ..entities.card import RookCard
 from ..entities.input_handler import PlayerInputHandler
 from ..entities.actor import Player
+from ..ui.hand import Hand
 
 map_width, map_height = 15, 15
 
 
 class Level:
     def __init__(self):
+        self.player_hand = None
         self.Stage_Layer = [TextureIndices]
 
         for i in range(map_height):
@@ -25,6 +31,8 @@ class Level:
             self.Mod_Stage_Layer.append([None] * map_width)
 
     def update(self, events):
+        self.player_hand.update(events)
+
         for y, row in enumerate(self.Actor_Layer):
             for x, tile_id in enumerate(row):
                 if tile_id is not None:
@@ -39,9 +47,8 @@ class Level:
             self.Actor_Layer[start_y][start_x] = None
             self.move_buffer.remove(pair)
 
-
-
     def draw(self, screen):
+
         for y, row in enumerate(self.Stage_Layer):
             for x, tile_id in enumerate(row):
                 gfxengine.draw_on_grid(screen, tile_id, x, y)
@@ -50,6 +57,8 @@ class Level:
             for x, tile_id in enumerate(row):
                 if tile_id is not None:
                     gfxengine.draw_on_grid(screen, tile_id.sprite_id, x, y)
+
+        self.player_hand.draw(screen)
 
     def generate_floor(self):
         self.Stage_Layer.clear()
@@ -107,5 +116,7 @@ class Level:
                 spawn_y += 1
             else:
                 spawn_x += 1
-
-        self.Actor_Layer[spawn_x][spawn_y] = Player(spawn_x, spawn_y, 10, 1, self, PlayerInputHandler())
+        player = Player(spawn_x, spawn_y, 10, self, PlayerInputHandler())
+        self.player_hand = Hand(player)
+        player.hand.add_card(RookCard())
+        self.Actor_Layer[spawn_x][spawn_y] = player
