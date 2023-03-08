@@ -21,12 +21,12 @@ An actor is anything that can move around and interact with the world/level incl
 
 
 class _Actor:
-    def __init__(self, x: int, y: int, health: int, hand, sprite_id: TextureIndices, level: "Level",
+    def __init__(self, x: int, y: int, health: int, sprite_id: TextureIndices, level: "Level",
                  input_handler: "_InputHandler"):
         self.x = x
         self.y = y
         self.health = health
-        self.hand = hand
+        self.hand = None
         self.sprite_id = sprite_id
         self.level = level
         self.input_handler = input_handler
@@ -38,7 +38,12 @@ class _Actor:
                 return True
         return False
 
-    def move(self, direction: Direction):
+    def move(self, new_x, new_y):
+        self.level.move_buffer.append((self.x, self.y, new_x, new_y))
+        self.x = new_x
+        self.y = new_y
+
+    def move_cardinal(self, direction: Direction):
         new_x = self.x
         new_y = self.y
         if direction == Direction.north:
@@ -56,16 +61,21 @@ class _Actor:
             self.x = new_x
             self.y = new_y
 
+    def give_hand(self, hand):
+        self.hand = hand
+
     def update(self, events):
         action = self.input_handler.handle_input(events)
         if action is not None:
             action.execute(self)
+        else:
+            self.hand.update(events)
 
     def draw(self, screen):
         gfxengine.draw_on_grid(screen, self.sprite_id, self.x, self.y)
 
 
 class Player(_Actor):
-    def __init__(self, x: int, y: int, health: int, hand, level: "Level",
+    def __init__(self, x: int, y: int, health: int, level: "Level",
                  input_handler: "_InputHandler"):
-        _Actor.__init__(self, x, y, health, hand, TextureIndices.player, level, input_handler)
+        _Actor.__init__(self, x, y, health, TextureIndices.player, level, input_handler)

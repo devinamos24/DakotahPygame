@@ -16,4 +16,4 @@ class MoveAction(_Action):
         self.direction = direction
 
     def execute(self, actor: _Actor):
-        actor.move(self.direction)
+        actor.move_cardinal(self.direction)

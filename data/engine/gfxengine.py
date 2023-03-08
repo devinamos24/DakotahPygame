@@ -59,7 +59,6 @@ def initialize_screen() -> Union[pygame.Surface, pygame.SurfaceType]:
     return pygame.display.set_mode(SCREEN_RESOLUTION)
 
 
-
 """
 This function draws textures based on grid x and y instead of pixel x and y
 """
@@ -68,4 +67,8 @@ This function draws textures based on grid x and y instead of pixel x and y
 def draw_on_grid(screen: Union[pygame.Surface, pygame.SurfaceType], texture_id: TextureIndices, x: int, y: int):
     x = x * TILE_SIDES
     y = y * TILE_SIDES
+    screen.blit(graphics[texture_id], (x, y))
+
+
+def draw(screen: Union[pygame.Surface, pygame.SurfaceType], texture_id: TextureIndices, x: int, y: int):
     screen.blit(graphics[texture_id], (x, y))
