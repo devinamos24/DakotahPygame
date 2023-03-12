@@ -1,0 +1,56 @@
+## **card type:**
+- move - allow the player to move
+- physical: -damage type
+	- slash
+	- stab
+	- bash
+- magical - damage type
+	- fire - aoe ground fire
+	- lightning - damage + movement
+	- ice - freezing
+	- earth - crate/destroy walls
+	- arcane - other
+- summon - effect
+	- zombie - horde
+	- dragon - takes a few cards to summon but powerful
+		- sub spell?
+	- elemental - see magical damage type
+- bleed - effect - causes 1 damage per turn then decreases by one
+- shield - effect - block some damage
+- poison - effect - deals damage based on stacked poison the decrease by one
+- deathtouch - effect - heal half of damage done rounded down
+
+## **to be added features:**
+- ~~player~~
+- ~~movement~~ + basic attack
+- hand
+- basic ui elements
+	- deck
+	- discard
+	- action points
+	- health
+	- mini map
+- meta map
+	- https://github.com/munificent/rooms-and-mazes
+- door connection to rooms
+- enemies
+	- https://github.com/munificent/a-turn-based-game-loop
+- enemy card/actions
+- enemy AI
+- card/indicator meta data to help AI choice making
+- inventory system
+	- equipment
+	- single cards
+	- one use cards or one use items outside of deck? (potions in slay the spire)
+
+## **to be looked at later:**
+- autotiler
+	- https://github.com/vladantrhlik/pygame-autotile
+	- https://v3x3d.itch.io/demonic-dungeon
+- item room per floor
+- action que
+- item/card rarity
+	-drop rate
+- shops
+- sprite manipulation?
+	-instead of making frames for common damage done, have a system take card of it
