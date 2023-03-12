@@ -55,19 +55,8 @@ class Indicator:
         self.indicator_type = indicator_type
         self.action = action
 
-    def on_click(self, remove_indicators):
+    def activate(self):
         self.action()
-        remove_indicators()
-        # Indicators should be removed at this point unless a move lets you jump twice or something will figure out later
-
-    def update(self, events, remove_indicators):
-        for event in events:
-            if event.type == pygame.MOUSEBUTTONUP:
-                mouse_x, mouse_y = pygame.mouse.get_pos()
-                tile_clicked_x = int(mouse_x / 32)
-                tile_clicked_y = int(mouse_y / 32)
-                if tile_clicked_x == self.x and tile_clicked_y == self.y:
-                    self.on_click(remove_indicators)
 
 
 class _Card:
@@ -89,6 +78,9 @@ class _Card:
     def activate(self, indicator_list):
         # this method must be overidden by subclasses
         # the logic in this class is the meat of the card, it calls protected functions from the parent class
+        pass
+
+    def check_click(self, x, y):
         pass
 
 
