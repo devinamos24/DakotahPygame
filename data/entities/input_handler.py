@@ -27,4 +27,8 @@ class PlayerInputHandler(_InputHandler):
             if event.type == pygame.KEYDOWN:
                 if event.key in list(self.bindings.keys()):
                     return self.bindings[event.key]
+            elif event.type == pygame.MOUSEBUTTONUP:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                return action.ClickAction(mouse_x, mouse_y)
+
         return None

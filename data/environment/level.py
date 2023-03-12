@@ -31,8 +31,6 @@ class Level:
             self.Mod_Stage_Layer.append([None] * map_width)
 
     def update(self, events):
-        self.player_hand.update(events)
-
         for y, row in enumerate(self.Actor_Layer):
             for x, tile_id in enumerate(row):
                 if tile_id is not None:
@@ -118,5 +116,7 @@ class Level:
                 spawn_x += 1
         player = Player(spawn_x, spawn_y, 10, self, PlayerInputHandler())
         self.player_hand = Hand(player)
+        player.hand.add_card(RookCard())
+        player.hand.add_card(RookCard())
         player.hand.add_card(RookCard())
         self.Actor_Layer[spawn_x][spawn_y] = player

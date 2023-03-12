@@ -17,3 +17,14 @@ class MoveAction(_Action):
 
     def execute(self, actor: _Actor):
         actor.move_cardinal(self.direction)
+        actor.hand.deselect_card()
+
+
+class ClickAction(_Action):
+    def __init__(self, x, y):
+        _Action.__init__(self)
+        self.x = x
+        self.y = y
+
+    def execute(self, actor: _Actor):
+        actor.hand.click(self.x, self.y)

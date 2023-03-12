@@ -60,26 +60,30 @@ class Hand:
             self.selected_card = card
             card.activate(self.indicators)
 
-    def get_clicked_card(self, mouse_x, mouse_y):
+    def click(self, x, y):
         for index, rect in enumerate(self.card_rects):
-            if rect.collidepoint(mouse_x, mouse_y):
-                return self.cards[index]
-        return None
-
-    def update(self, events):
+            if rect.collidepoint(x, y):
+                self.select_card(self.cards[index])
+                return
         for indicator in self.indicators:
-            indicator.update(events, (lambda: self.remove_card(self.selected_card)))
+            tile_clicked_x = int(x / 32)
+            tile_clicked_y = int(y / 32)
+            if tile_clicked_x == indicator.x and tile_clicked_y == indicator.y:
+                indicator.activate()
+                self.indicators.clear()
+                self.remove_card(self.selected_card)
+                return
+        self.deselect_card()
 
-        for event in events:
-            if event.type == pygame.MOUSEBUTTONUP:
-                mouse_x, mouse_y = pygame.mouse.get_pos()
-                clicked_card = self.get_clicked_card(mouse_x, mouse_y)
-                if clicked_card is not None:
-                    self.select_card(clicked_card)
+    # def get_clicked_card(self, mouse_x, mouse_y):
+    #     for index, rect in enumerate(self.card_rects):
+    #         if rect.collidepoint(mouse_x, mouse_y):
+    #             return self.cards[index]
+    #     return None
 
     def draw(self, screen):
         for index, card in enumerate(self.cards):
-            x = index * self.card_width + self.x
+            x = index * (self.card_width + self.card_gap) + self.x
             gfxengine.draw(screen, card.texture_id, x, self.y)
 
         for indicator in self.indicators:

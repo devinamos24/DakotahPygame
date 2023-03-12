@@ -68,14 +68,16 @@ class _Actor:
         action = self.input_handler.handle_input(events)
         if action is not None:
             action.execute(self)
-        else:
-            self.hand.update(events)
 
     def draw(self, screen):
         gfxengine.draw_on_grid(screen, self.sprite_id, self.x, self.y)
+
+    def click(self, x, y):
+        pass
 
 
 class Player(_Actor):
     def __init__(self, x: int, y: int, health: int, level: "Level",
                  input_handler: "_InputHandler"):
         _Actor.__init__(self, x, y, health, TextureIndices.player, level, input_handler)
+
