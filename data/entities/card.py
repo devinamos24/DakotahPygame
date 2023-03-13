@@ -44,7 +44,6 @@ class _Card:
             check_x = x + self.owner.x
             check_y = y + self.owner.y
             if self.owner.check_valid_move(check_x, check_y):
-                print('-------------')
                 def check_or_position():
                     for or_set in position.check_position:
                         def check_and_set():
@@ -52,7 +51,6 @@ class _Card:
                             for nx, ny in or_set:
                                 if not self.owner.check_valid_move(nx + self.owner.x, ny + self.owner.y):
                                     and_test += 1
-                            print(len(or_set), and_test)
                             if len(or_set) == and_test:
                                 return False
                             else:
@@ -155,6 +153,15 @@ class KnightCard(_Card):
         #Down Right
         moves.append(Position((2, 1), ([(1, 0),(0, 1)], [(1, 1),(1, 0)],[(1, 1),(2, 0)])))
         moves.append(Position((1, 2), ([(0, 1),(1, 0)], [(1, 1),(0, 1)],[(1, 1),(0, 2)])))
+        #Down Left
+        moves.append(Position((-2, 1), ([(-1, 0),(0, 1)], [(-1, 1),(-1, 0)],[(-1, 1),(-2, 0)])))
+        moves.append(Position((-1, 2), ([(0, 1),(-1, 0)], [(-1, 1),(0, 1)],[(-1, 1),(0, 2)])))
+        #Up Right
+        moves.append(Position((2, -1), ([(1, 0),(0, -1)], [(1, -1),(1, 0)],[(1, -1),(2, 0)])))
+        moves.append(Position((1, -2), ([(0, -1),(1, 0)], [(1, -1),(0, -1)],[(1, -1),(0, -2)])))
+        #Down Right
+        moves.append(Position((-2, -1), ([(-1, 0),(0, -1)], [(-1, -1),(-1, 0)],[(-1, -1),(-2, 0)])))
+        moves.append(Position((-1, -2), ([(0, -1),(-1, 0)], [(-1, -1),(0, -1)],[(-1, -1),(0, -2)])))
         if self.owner is not None:
             for _move in moves:
                 valid_move = self._validate(_move)
