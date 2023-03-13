@@ -59,6 +59,11 @@ class Indicator:
         self.action()
 
 
+class Position:
+    def __init__(self, move_position, check_position):
+        self.move_position = move_position
+        self.check_position = check_position
+
 class _Card:
     def __init__(self, name):
         self.name = name
@@ -75,6 +80,28 @@ class _Card:
         # move actor where you want it
         pass
 
+    def _validate(self, position: Position):
+        try:
+            x, y = position.move_position
+            check_x = x + self.owner.x
+            check_y = y + self.owner.y
+            if self.owner.check_valid_move(check_x, check_y):
+                def check_or_position():
+                    for or_set in position.check_position:
+                        def check_and_set():
+                            for nx, ny in or_set:
+                                if not self.owner.check_valid_move(nx + self.owner.x, ny + self.owner.y):
+                                    return False
+                            return True
+                        if check_and_set():
+                            return check_x, check_y
+                        return None
+
+                return check_or_position()
+        except Exception:
+            # nothing bad actually happened we just checked outside the map bounds
+            pass
+
     def activate(self, indicator_list):
         # this method must be overidden by subclasses
         # the logic in this class is the meat of the card, it calls protected functions from the parent class
@@ -83,27 +110,24 @@ class _Card:
     def check_click(self, x, y):
         pass
 
-
 class RookCard(_Card):
     def __init__(self):
         _Card.__init__(self, "rook")
         self.texture_id = TextureIndices.rook_card
 
     def activate(self, indicator_list):
-        moves = ((0, 1), (1, 0), (0, -1), (-1, 0))
+        def move(new_x, new_y): return lambda: (self.owner.move(new_x, new_y))
+        moves = []
+        moves.append(Position((0, 2), ([(0, 1)], [(0, 2)])))
         if self.owner is not None:
-            try:
-                for x, y in moves:
-                    check_x = x + self.owner.x
-                    check_y = y + self.owner.y
-                    if self.owner.check_valid_move(check_x, check_y):
-                        def move(new_x, new_y): return lambda: (self.owner.move(new_x, new_y))
+            for _move in moves:
+                valid_move = self._validate(_move)
+                if valid_move is not None:
+                    x, y = valid_move
+                    indicator_list.append(
+                        Indicator(x, y, TextureIndices.move_indicator, move(x, y)))
 
-                        indicator_list.append(
-                            Indicator(check_x, check_y, TextureIndices.move_indicator, move(check_x, check_y)))
-            except Exception:
-                # nothing bad actually happened we just checked outside the map bounds
-                pass
+
 
 # class LightningCard(_Card):
 #     def __init__(self):
