@@ -4,7 +4,7 @@ import pygame
 
 from ..engine import gfxengine
 from ..engine.gfxengine import TextureIndices
-from ..entities.card import RookCard
+from ..entities.card import RookCard, BishopCard, KnightCard
 from ..entities.input_handler import PlayerInputHandler
 from ..entities.actor import Player
 from ..ui.hand import Hand
@@ -117,6 +117,6 @@ class Level:
         player = Player(spawn_x, spawn_y, 10, self, PlayerInputHandler())
         self.player_hand = Hand(player)
         player.hand.add_card(RookCard())
-        player.hand.add_card(RookCard())
-        player.hand.add_card(RookCard())
+        player.hand.add_card(KnightCard())
+        player.hand.add_card(BishopCard())
         self.Actor_Layer[spawn_x][spawn_y] = player

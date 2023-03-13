@@ -44,13 +44,19 @@ class _Card:
             check_x = x + self.owner.x
             check_y = y + self.owner.y
             if self.owner.check_valid_move(check_x, check_y):
+                print('-------------')
                 def check_or_position():
                     for or_set in position.check_position:
                         def check_and_set():
+                            and_test = 0
                             for nx, ny in or_set:
                                 if not self.owner.check_valid_move(nx + self.owner.x, ny + self.owner.y):
-                                    return False
-                            return True
+                                    and_test += 1
+                            print(len(or_set), and_test)
+                            if len(or_set) == and_test:
+                                return False
+                            else:
+                                return True
                         if check_and_set():
                             result = True
                         else:
@@ -80,9 +86,22 @@ class RookCard(_Card):
     def activate(self, indicator_list):
         def move(new_x, new_y): return lambda: (self.owner.move(new_x, new_y))
         moves = []
-        moves.append(Position((0, 1), ([(0, 1)], [(0, 1)]))) #python doesnt like only having 1 position check and simplifies it and messes with the data structure
+        #south
+        moves.append(Position((0, 1), ([(0, 1)], [(0, 1)]))) #python doesnt like only having 1 position check and simplifies it thus messes with the data structure
         moves.append(Position((0, 2), ([(0, 1)], [(0, 2)])))
         moves.append(Position((0, 3), ([(0, 1)], [(0, 2)], [(0, 3)])))
+        #north
+        moves.append(Position((0, -1), ([(0, -1)], [(0, -1)])))
+        moves.append(Position((0, -2), ([(0, -1)], [(0, -2)])))
+        moves.append(Position((0, -3), ([(0, -1)], [(0, -2)], [(0, -3)])))
+        #east
+        moves.append(Position((1, 0), ([(1, 0)], [(1, 0)])))
+        moves.append(Position((2, 0), ([(1, 0)], [(2, 0)])))
+        moves.append(Position((3, 0), ([(1, 0)], [(2, 0)], [(3, 0)])))
+        #west
+        moves.append(Position((-1, 0), ([(-1, 0)], [(-1, 0)])))
+        moves.append(Position((-2, 0), ([(-1, 0)], [(-2, 0)])))
+        moves.append(Position((-3, 0), ([(-1, 0)], [(-2, 0)], [(-3, 0)])))
         if self.owner is not None:
             for _move in moves:
                 valid_move = self._validate(_move)
@@ -92,14 +111,54 @@ class RookCard(_Card):
                         Indicator(x, y, TextureIndices.move_indicator, move(x, y)))
 
 
+class BishopCard(_Card):
+    def __init__(self):
+        _Card.__init__(self, "bishop")
+        self.texture_id = TextureIndices.bishop_card
 
-# class LightningCard(_Card):
-#     def __init__(self):
-#         _Card.__init__(self)
-#
-#     def activate(self):
-#         lightning_strike = lambda x, y: strike_lightning(x, y) #do something else fancy
-#
-#         for loop checking and placing indicators blah blah
-#         x, y = 1, 1
-#         self._place_indicator(x, y, lightning_strike(x, y))
+    def activate(self, indicator_list):
+        def move(new_x, new_y): return lambda: (self.owner.move(new_x, new_y))
+        moves = []
+        #Down Right
+        moves.append(Position((1, 1), ([(1, 1)], [(1, 1)]))) #python doesnt like only having 1 position check and simplifies it thus messes with the data structure
+        moves.append(Position((2, 2), ([(1, 1)], [(2, 2)])))
+        moves.append(Position((3, 3), ([(1, 1)], [(2, 2)], [(3, 3)])))
+        #Up Right
+        moves.append(Position((1, -1), ([(1, -1)], [(1, -1)])))
+        moves.append(Position((2, -2), ([(1, -1)], [(2, -2)])))
+        moves.append(Position((3, -3), ([(1, -1)], [(2, -2)], [(3, -3)])))
+        #Down Left
+        moves.append(Position((-1, 1), ([(-1, 1)], [(-1, 1)])))
+        moves.append(Position((-2, 2), ([(-1, 1)], [(-2, 2)])))
+        moves.append(Position((-3, 3), ([(-1, 1)], [(-2, 2)], [(-3, 3)])))
+        #Up Left
+        moves.append(Position((-1, -1), ([(-1, -1)], [(-1, -1)])))
+        moves.append(Position((-2, -2), ([(-1, -1)], [(-2, -2)])))
+        moves.append(Position((-3, -3), ([(-1, -1)], [(-2, -2)], [(-3, -3)])))
+        if self.owner is not None:
+            for _move in moves:
+                valid_move = self._validate(_move)
+                if valid_move is not None:
+                    x, y = valid_move
+                    indicator_list.append(
+                        Indicator(x, y, TextureIndices.move_indicator, move(x, y)))
+                    
+
+class KnightCard(_Card):
+    def __init__(self):
+        _Card.__init__(self, "knight")
+        self.texture_id = TextureIndices.knight_card
+
+    def activate(self, indicator_list):
+        def move(new_x, new_y): return lambda: (self.owner.move(new_x, new_y))
+        moves = []
+        #Down Right
+        moves.append(Position((2, 1), ([(1, 0),(0, 1)], [(1, 1),(1, 0)],[(1, 1),(2, 0)])))
+        moves.append(Position((1, 2), ([(0, 1),(1, 0)], [(1, 1),(0, 1)],[(1, 1),(0, 2)])))
+        if self.owner is not None:
+            for _move in moves:
+                valid_move = self._validate(_move)
+                if valid_move is not None:
+                    x, y = valid_move
+                    indicator_list.append(
+                        Indicator(x, y, TextureIndices.move_indicator, move(x, y)))
