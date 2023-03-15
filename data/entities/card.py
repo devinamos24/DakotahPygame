@@ -118,21 +118,21 @@ class BishopCard(_Card):
         def move(new_x, new_y): return lambda: (self.owner.move(new_x, new_y))
         moves = []
         #Down Right
-        moves.append(Position((1, 1), ([(1, 1)], [(1, 1)]))) #python doesnt like only having 1 position check and simplifies it thus messes with the data structure
-        moves.append(Position((2, 2), ([(1, 1)], [(2, 2)])))
-        moves.append(Position((3, 3), ([(1, 1)], [(2, 2)], [(3, 3)])))
+        moves.append(Position((1, 1), ([(1, 1)], [(1, 0), [0, 1]])))
+        moves.append(Position((2, 2), ([(1, 1)], [(2, 2)], [(1, 0), [0, 1]], [(2, 1), (1, 2)])))
+        moves.append(Position((3, 3), ([(1, 1)], [(2, 2)], [(1, 0), [0, 1]], [(2, 1), (1, 2)], [(3, 3)], [(3, 2), (2, 3)])))
         #Up Right
-        moves.append(Position((1, -1), ([(1, -1)], [(1, -1)])))
-        moves.append(Position((2, -2), ([(1, -1)], [(2, -2)])))
-        moves.append(Position((3, -3), ([(1, -1)], [(2, -2)], [(3, -3)])))
+        moves.append(Position((1, -1), ([(1, -1)], [(1, 0), [0, -1]])))
+        moves.append(Position((2, -2), ([(1, -1)], [(2, -2)], [(1, 0), [0, -1]], [(2, -1), (1, -2)])))
+        moves.append(Position((3, -3), ([(1, -1)], [(2, -2)], [(3, -3)], [(1, 0), [0, -1]], [(2, -1), (1, -2)], [(3, -3)], [(3, -2), (2, -3)])))
         #Down Left
-        moves.append(Position((-1, 1), ([(-1, 1)], [(-1, 1)])))
-        moves.append(Position((-2, 2), ([(-1, 1)], [(-2, 2)])))
-        moves.append(Position((-3, 3), ([(-1, 1)], [(-2, 2)], [(-3, 3)])))
+        moves.append(Position((-1, 1), ([(-1, 1)], [(-1, 0), [0, 1]])))
+        moves.append(Position((-2, 2), ([(-1, 1)], [(-2, 2)], [(-1, 0), [0, 1]], [(-2, 1), (-1, 2)])))
+        moves.append(Position((-3, 3), ([(-1, 1)], [(-2, 2)], [(-3, 3)], [(-1, 0), [0, 1]], [(-2, 1), (-1, 2)], [(-3, 3)], [(-3, 2), (-2, 3)])))
         #Up Left
-        moves.append(Position((-1, -1), ([(-1, -1)], [(-1, -1)])))
-        moves.append(Position((-2, -2), ([(-1, -1)], [(-2, -2)])))
-        moves.append(Position((-3, -3), ([(-1, -1)], [(-2, -2)], [(-3, -3)])))
+        moves.append(Position((-1, -1), ([(-1, -1)], [(-1, 0), [0, -1]])))
+        moves.append(Position((-2, -2), ([(-1, -1)], [(-2, -2)], [(-1, 0), [0, -1]], [(-2, -1), (-1, -2)])))
+        moves.append(Position((-3, -3), ([(-1, -1)], [(-2, -2)], [(-3, -3)], [(-1, 0), [0, -1]], [(-2, -1), (-1, -2)], [(-3, -3)], [(-3, -2), (-2, -3)])))
         if self.owner is not None:
             for _move in moves:
                 valid_move = self._validate(_move)

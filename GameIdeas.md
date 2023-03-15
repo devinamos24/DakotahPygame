@@ -37,6 +37,7 @@
 	- https://github.com/munificent/a-turn-based-game-loop
 - enemy card/actions
 - enemy AI
+- card/indicator meta data to help AI choice making
 - inventory system
 	- equipment
 	- single cards
