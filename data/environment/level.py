@@ -102,21 +102,27 @@ class Level:
         spawn_x = 1
         spawn_y = 1
         while True:
+            if self.Stage_Layer[spawn_y][spawn_x] == 0:  # 0 represents a free space
+                break
+            # Inc + Reset
             if spawn_x == spawn_y:
-                if self.Stage_Layer[spawn_x][spawn_y] == 0:  # 0 represents a free space
-                    break
-            if spawn_x != spawn_y:
-                if self.Stage_Layer[spawn_x][spawn_y] == 0:
-                    break
-                if self.Stage_Layer[spawn_y][spawn_x] == 0:
-                    break
-            if spawn_x >= spawn_y:
                 spawn_y += 1
-            else:
-                spawn_x += 1
+                spawn_x = 1
+                continue
+            # Inc
+            if spawn_x == spawn_y + 1:
+                spawn_y += 1
+                continue
+            # Inc + Flip
+            if spawn_y < spawn_x - 1:
+                spawn_y += 1
+                spawn_x, spawn_y = spawn_y, spawn_x
+                continue
+            # Flip
+            spawn_x, spawn_y = spawn_y, spawn_x
         player = Player(spawn_x, spawn_y, 10, self, PlayerInputHandler())
         self.player_hand = Hand(player)
         player.hand.add_card(RookCard())
         player.hand.add_card(KnightCard())
         player.hand.add_card(BishopCard())
-        self.Actor_Layer[spawn_x][spawn_y] = player
+        self.Actor_Layer[spawn_y][spawn_x] = player
