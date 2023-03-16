@@ -23,7 +23,7 @@
 ## **to be added features:**
 - ~~player~~
 - ~~movement~~ + basic attack
-- hand
+- ~~hand~~
 - basic ui elements
 	- deck
 	- discard
