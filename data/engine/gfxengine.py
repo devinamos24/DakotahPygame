@@ -20,6 +20,8 @@ class TextureIndices(IntEnum):
     knight_card = 5
     rook_card = 6
     shuffle_card = 7
+    lightning_bolt = 8
+    fire_ball = 9
 
 
 path = os.path.join("..", "resources")
