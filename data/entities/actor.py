@@ -69,13 +69,13 @@ class _Actor:
             self.x = new_x
             self.y = new_y
 
-    def take_damage(self, damage_type, amount):
-        self.health = self.health - amount
+    def take_damage(self, damage):
+        self.health = self.health - damage.damage_amount
 
-    def do_damage(self, damage_type, x, y):
+    def do_damage(self, damage, x, y):
         opponent = self.level.Actor_Layer[y][x]
         if opponent != None:
-            return lambda : (opponent.take_damage(None, 1))
+            return lambda : (opponent.take_damage(damage.damage_type, damage.damage_amount))
         else:
             return lambda : (self.do_nothing())
 

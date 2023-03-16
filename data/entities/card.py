@@ -17,6 +17,12 @@ class Indicator:
         self.action()
 
 
+class _damage:
+    def __init__(self, damage_type, damage_amount):
+        self.damage_type = damage_type
+        self.damage_amount = damage_amount
+
+
 class Position:
     def __init__(self, move_position, check_position):
         self.move_position = move_position
@@ -205,6 +211,10 @@ class LightningBoltCard(_Card):
     def __init__(self):
         _Card.__init__(self, "lightning_bolt")
         self.texture_id = TextureIndices.lightning_bolt
+        damage = _damage('Lightning', 1)
+    
+    def card_damage(self):
+        return _damage('Lightning', 1)
 
     def activate(self, indicator_list):
         attack_position = []
@@ -222,4 +232,4 @@ class LightningBoltCard(_Card):
                 if valid_position is not None:
                     x, y = valid_position
                     indicator_list.append(
-                        Indicator(x, y, TextureIndices.move_indicator, self.owner.do_damage(None, x, y)))
+                        Indicator(x, y, TextureIndices.move_indicator, self.owner.do_damage(self.card_damage, x, y)))
