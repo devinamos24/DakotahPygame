@@ -2,7 +2,7 @@ import random
 
 from ..engine import gfxengine
 from ..engine.gfxengine import TextureIndices
-from ..entities.card import RookCard, BishopCard, KnightCard, LightningBoltCard
+from ..entities.card import RookCard, BishopCard, KnightCard, LightningBoltCard, FireBallCard
 from ..entities.input_handler import PlayerInputHandler, AIInputHandler
 from ..entities.actor import Player, Scarecrow
 from ..ui.hand import Hand
@@ -117,6 +117,7 @@ class Level:
         player.hand.add_card(KnightCard())
         player.hand.add_card(BishopCard())
         player.hand.add_card(LightningBoltCard())
+        player.hand.add_card(FireBallCard())
         self.actors.append(player)
         self.spawn_enemy_randomly(Scarecrow)
         self.spawn_enemy_randomly(Scarecrow)

@@ -257,3 +257,38 @@ class LightningBoltCard(_Card):
                     x, y = valid_position
                     indicator_list.append(
                         Indicator(x, y, TextureIndices.move_indicator, attack(x, y)))
+                    
+
+class FireBallCard(_Card):
+    def __init__(self):
+        _Card.__init__(self, "fire_ball")
+        self.texture_id = TextureIndices.fire_ball
+        self.damage = Damage('Fire', 999)
+
+    def activate(self, indicator_list):
+        def try_to_do_damage(x, y):
+            while True:
+                if self.owner.check_valid_attack(x,y):
+                    try:
+                        self.owner.level.actors[y][x].take_damage(self.damage)
+                    except:
+                        x = x + 1
+                        y = y + 1
+                else:
+                    break
+
+        def attack(x, y):
+            return lambda: try_to_do_damage(x, y)
+
+        attack_position = []
+        attack_position.append(Position((1, 0), ([(1, 0)], [(1, 0)])))
+        attack_position.append(Position((-1, 0), ([(-1, 0)], [(-1, 0)])))
+        attack_position.append(Position((0, 1), ([(0, 1)], [(0, 1)])))
+        attack_position.append(Position((0, -1), ([(0, -1)], [(0, -1)])))
+        if self.owner is not None:
+            for positions in attack_position:
+                valid_position = self.validate_attack(positions)
+                if valid_position is not None:
+                    x, y = valid_position
+                    indicator_list.append(
+                        Indicator(x, y, TextureIndices.move_indicator, attack(x, y)))
