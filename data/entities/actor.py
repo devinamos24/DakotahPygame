@@ -2,9 +2,11 @@ from enum import IntEnum
 from data.engine import gfxengine
 from data.engine.gfxengine import TextureIndices
 from typing import TYPE_CHECKING
+import data.entities.card as card
 
 if TYPE_CHECKING:
     from data.entities.input_handler import _InputHandler
+    from data.entities.card import Damage
     from data.environment.level import Level
 
 
@@ -32,14 +34,21 @@ class _Actor:
         self.input_handler = input_handler
 
     # TODO make a list of move throughable dumb objects and store a move throughable boolean on smart objects and check that
-    def check_valid_move(self, x, y) -> bool:
+    def check_valid_move(self, x, y) -> bool or list:
         if self.level.Stage_Layer[y][x] != TextureIndices.wall:
-            if self.level.Actor_Layer[y][x] is None:
-                return True
+            collided_actors = [actor for actor in self.level.actors if actor.x == x and actor.y == y]
+            if len(collided_actors) == 0:
+                return False
+            else:
+                return collided_actors
+        return True
+
+    def check_valid_attack(self, x, y) -> bool:
+        if self.level.Stage_Layer[y][x] != TextureIndices.wall:
+            return True
         return False
 
     def move(self, new_x, new_y):
-        self.level.move_buffer.append((self.x, self.y, new_x, new_y))
         self.x = new_x
         self.y = new_y
 
@@ -56,10 +65,24 @@ class _Actor:
             new_x -= 1
         else:
             raise Exception(f"Direction: {direction} is not valid!")
-        if self.check_valid_move(new_x, new_y):
-            self.level.move_buffer.append((self.x, self.y, new_x, new_y))
-            self.x = new_x
-            self.y = new_y
+        collided_actors = self.check_valid_move(new_x, new_y)
+        if not collided_actors and isinstance(collided_actors, bool):
+            self.move(new_x, new_y)
+        elif collided_actors and not isinstance(collided_actors, bool):
+            for actor in collided_actors:
+                actor.take_damage(self.do_damage())
+
+    def take_damage(self, damage: "Damage" or None):
+        if damage is not None:
+            self.health -= damage.damage_amount
+            if self.health <= 0:
+                self.die()
+
+    def do_damage(self) -> "Damage" or None:
+        return card.Damage("Physical", 1)
+
+    def die(self):
+        self.level.actors.remove(self)
 
     def give_hand(self, hand):
         self.hand = hand
@@ -77,7 +100,18 @@ class _Actor:
 
 
 class Player(_Actor):
-    def __init__(self, x: int, y: int, health: int, level: "Level",
+    def __init__(self, x: int, y: int, level: "Level",
                  input_handler: "_InputHandler"):
-        _Actor.__init__(self, x, y, health, TextureIndices.player, level, input_handler)
+        _Actor.__init__(self, x, y, 10, TextureIndices.player, level, input_handler)
+
+    def take_damage(self, damage: "Damage" or None):
+        if damage is not None:
+            self.health -= damage.damage_amount
+            if self.health <= 0:
+                self.die()
+
+
+class Scarecrow(_Actor):
+    def __init__(self, x: int, y: int, level: "Level", input_handler: "_InputHandler"):
+        _Actor.__init__(self, x, y, 5, TextureIndices.scarecrow, level, input_handler)
 

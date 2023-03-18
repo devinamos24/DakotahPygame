@@ -1,12 +1,10 @@
 import random
 
-import pygame
-
 from ..engine import gfxengine
 from ..engine.gfxengine import TextureIndices
-from ..entities.card import RookCard, BishopCard, KnightCard
-from ..entities.input_handler import PlayerInputHandler
-from ..entities.actor import Player
+from ..entities.card import RookCard, BishopCard, KnightCard, LightningBoltCard
+from ..entities.input_handler import PlayerInputHandler, AIInputHandler
+from ..entities.actor import Player, Scarecrow
 from ..ui.hand import Hand
 
 map_width, map_height = 15, 15
@@ -16,34 +14,32 @@ class Level:
     def __init__(self):
         self.player_hand = None
         self.Stage_Layer = [TextureIndices]
-
-        for i in range(map_height):
-            self.Stage_Layer.append([0] * map_width)
-
-        self.Actor_Layer = []
-        self.move_buffer = []
+        self.actors = []
         self.Mod_Stage_Layer = []
 
         for i in range(map_height):
-            self.Actor_Layer.append([None] * map_width)
-
-        for i in range(map_height):
+            self.Stage_Layer.append([0] * map_width)
             self.Mod_Stage_Layer.append([None] * map_width)
 
-    def update(self, events):
-        for y, row in enumerate(self.Actor_Layer):
-            for x, tile_id in enumerate(row):
-                if tile_id is not None:
-                    tile_id.update(events)
+        self.move_buffer = []
 
-        for pair in self.move_buffer:
-            start_x = pair[0]
-            start_y = pair[1]
-            end_x = pair[2]
-            end_y = pair[3]
-            self.Actor_Layer[end_y][end_x] = self.Actor_Layer[start_y][start_x]
-            self.Actor_Layer[start_y][start_x] = None
-            self.move_buffer.remove(pair)
+    def update(self, events):
+        for actor in self.actors:
+            actor.update(events)
+
+        # for y, row in enumerate(self.actors):
+        #     for x, tile_id in enumerate(row):
+        #         if tile_id is not None:
+        #             tile_id.update(events)
+
+        # for pair in self.move_buffer:
+        #     start_x = pair[0]
+        #     start_y = pair[1]
+        #     end_x = pair[2]
+        #     end_y = pair[3]
+        #     self.actors[end_y][end_x] = self.actors[start_y][start_x]
+        #     self.actors[start_y][start_x] = None
+        #     self.move_buffer.remove(pair)
 
     def draw(self, screen):
 
@@ -51,10 +47,13 @@ class Level:
             for x, tile_id in enumerate(row):
                 gfxengine.draw_on_grid(screen, tile_id, x, y)
 
-        for y, row in enumerate(self.Actor_Layer):
-            for x, tile_id in enumerate(row):
-                if tile_id is not None:
-                    gfxengine.draw_on_grid(screen, tile_id.sprite_id, x, y)
+        for actor in self.actors:
+            gfxengine.draw_on_grid(screen, actor.sprite_id, actor.x, actor.y)
+
+        # for y, row in enumerate(self.actors):
+        #     for x, tile_id in enumerate(row):
+        #         if tile_id is not None:
+        #             gfxengine.draw_on_grid(screen, tile_id.sprite_id, x, y)
 
         self.player_hand.draw(screen)
 
@@ -97,6 +96,17 @@ class Level:
                 if num_walls >= 3:
                     self.Stage_Layer[y][x] = TextureIndices.wall
 
+    def spawn_enemy_randomly(self, enemy_class):
+        while True:
+            spawn_x = random.randint(1, map_width-1)
+            spawn_y = random.randint(1, map_height-1)
+
+            if self.Stage_Layer[spawn_y][spawn_x] == 0:
+                if len([actor for actor in self.actors if actor.x == spawn_x and actor.y == spawn_y]) == 0:
+                    enemy = enemy_class(spawn_x, spawn_y, self, AIInputHandler())
+                    self.actors.append(enemy)
+                    return
+
     def spawn_player(self):
         # Set the player starting position
         spawn_x = 1
@@ -120,9 +130,17 @@ class Level:
                 continue
             # Flip
             spawn_x, spawn_y = spawn_y, spawn_x
-        player = Player(spawn_x, spawn_y, 10, self, PlayerInputHandler())
+        player = Player(spawn_x, spawn_y, self, PlayerInputHandler())
         self.player_hand = Hand(player)
         player.hand.add_card(RookCard())
         player.hand.add_card(KnightCard())
         player.hand.add_card(BishopCard())
-        self.Actor_Layer[spawn_y][spawn_x] = player
+        player.hand.add_card(LightningBoltCard())
+        self.actors.append(player)
+        self.spawn_enemy_randomly(Scarecrow)
+        self.spawn_enemy_randomly(Scarecrow)
+        self.spawn_enemy_randomly(Scarecrow)
+        self.spawn_enemy_randomly(Scarecrow)
+        self.spawn_enemy_randomly(Scarecrow)
+        self.spawn_enemy_randomly(Scarecrow)
+        self.spawn_enemy_randomly(Scarecrow)

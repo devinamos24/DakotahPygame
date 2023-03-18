@@ -17,7 +17,8 @@ class MoveAction(_Action):
 
     def execute(self, actor: _Actor):
         actor.move_cardinal(self.direction)
-        actor.hand.deselect_card()
+        if actor.hand is not None:
+            actor.hand.deselect_card()
 
 
 class ClickAction(_Action):
