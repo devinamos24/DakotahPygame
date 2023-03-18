@@ -50,13 +50,13 @@ class _Card:
             x, y = position.move_position
             check_x = x + self.owner.x
             check_y = y + self.owner.y
-            if self.owner.check_valid_move(check_x, check_y):
+            if not bool(self.owner.check_valid_move(check_x, check_y)):
                 def check_or_position():
                     for or_set in position.check_position:
                         def check_and_set():
                             and_test = 0
                             for nx, ny in or_set:
-                                if not self.owner.check_valid_move(nx + self.owner.x, ny + self.owner.y):
+                                if bool(self.owner.check_valid_move(nx + self.owner.x, ny + self.owner.y)):
                                     and_test += 1
                             if len(or_set) == and_test:
                                 return False
@@ -232,7 +232,7 @@ class LightningBoltCard(_Card):
     def activate(self, indicator_list):
         def try_to_do_damage(x, y):
             try:
-                self.owner.level.Actor_Layer[y][x].take_damage(self.damage)
+                self.owner.level.actors[y][x].take_damage(self.damage)
             except:
                 pass
 

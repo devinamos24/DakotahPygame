@@ -14,30 +14,32 @@ class Level:
     def __init__(self):
         self.player_hand = None
         self.Stage_Layer = [TextureIndices]
-        self.Actor_Layer = []
+        self.actors = []
         self.Mod_Stage_Layer = []
 
         for i in range(map_height):
             self.Stage_Layer.append([0] * map_width)
-            self.Actor_Layer.append([None] * map_width)
             self.Mod_Stage_Layer.append([None] * map_width)
 
         self.move_buffer = []
 
     def update(self, events):
-        for y, row in enumerate(self.Actor_Layer):
-            for x, tile_id in enumerate(row):
-                if tile_id is not None:
-                    tile_id.update(events)
+        for actor in self.actors:
+            actor.update(events)
 
-        for pair in self.move_buffer:
-            start_x = pair[0]
-            start_y = pair[1]
-            end_x = pair[2]
-            end_y = pair[3]
-            self.Actor_Layer[end_y][end_x] = self.Actor_Layer[start_y][start_x]
-            self.Actor_Layer[start_y][start_x] = None
-            self.move_buffer.remove(pair)
+        # for y, row in enumerate(self.actors):
+        #     for x, tile_id in enumerate(row):
+        #         if tile_id is not None:
+        #             tile_id.update(events)
+
+        # for pair in self.move_buffer:
+        #     start_x = pair[0]
+        #     start_y = pair[1]
+        #     end_x = pair[2]
+        #     end_y = pair[3]
+        #     self.actors[end_y][end_x] = self.actors[start_y][start_x]
+        #     self.actors[start_y][start_x] = None
+        #     self.move_buffer.remove(pair)
 
     def draw(self, screen):
 
@@ -45,10 +47,13 @@ class Level:
             for x, tile_id in enumerate(row):
                 gfxengine.draw_on_grid(screen, tile_id, x, y)
 
-        for y, row in enumerate(self.Actor_Layer):
-            for x, tile_id in enumerate(row):
-                if tile_id is not None:
-                    gfxengine.draw_on_grid(screen, tile_id.sprite_id, x, y)
+        for actor in self.actors:
+            gfxengine.draw_on_grid(screen, actor.sprite_id, actor.x, actor.y)
+
+        # for y, row in enumerate(self.actors):
+        #     for x, tile_id in enumerate(row):
+        #         if tile_id is not None:
+        #             gfxengine.draw_on_grid(screen, tile_id.sprite_id, x, y)
 
         self.player_hand.draw(screen)
 
@@ -97,9 +102,9 @@ class Level:
             spawn_y = random.randint(1, map_height-1)
 
             if self.Stage_Layer[spawn_y][spawn_x] == 0:
-                if self.Actor_Layer[spawn_y][spawn_x] is None:
+                if len([actor for actor in self.actors if actor.x == spawn_x and actor.y == spawn_y]) == 0:
                     enemy = enemy_class(spawn_x, spawn_y, self, AIInputHandler())
-                    self.Actor_Layer[spawn_y][spawn_x] = enemy
+                    self.actors.append(enemy)
                     return
 
     def spawn_player(self):
@@ -131,5 +136,11 @@ class Level:
         player.hand.add_card(KnightCard())
         player.hand.add_card(BishopCard())
         player.hand.add_card(LightningBoltCard())
-        self.Actor_Layer[spawn_y][spawn_x] = player
+        self.actors.append(player)
+        self.spawn_enemy_randomly(Scarecrow)
+        self.spawn_enemy_randomly(Scarecrow)
+        self.spawn_enemy_randomly(Scarecrow)
+        self.spawn_enemy_randomly(Scarecrow)
+        self.spawn_enemy_randomly(Scarecrow)
+        self.spawn_enemy_randomly(Scarecrow)
         self.spawn_enemy_randomly(Scarecrow)
