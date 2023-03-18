@@ -5,6 +5,7 @@ import data.entities.action as action
 import data.entities.actor as actor
 
 
+# Base input class
 class _InputHandler:
     def __init__(self):
         self.bindings = {}
@@ -16,6 +17,7 @@ class _InputHandler:
         self.bindings[key] = action
 
 
+# Input handler for player, does button adn click inputs
 class PlayerInputHandler(_InputHandler):
     def __init__(self):
         _InputHandler.__init__(self)
@@ -35,6 +37,7 @@ class PlayerInputHandler(_InputHandler):
         return None
 
 
+# AI random movement for non-player actors
 class AIInputHandler(_InputHandler):
     def __init__(self):
         _InputHandler.__init__(self)

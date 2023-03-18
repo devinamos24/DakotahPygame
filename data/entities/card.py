@@ -45,6 +45,7 @@ class _Card:
         # move actor where you want it
         pass
 
+    # Check that the space is free of walls and actors
     def validate_move(self, position: Position):
         try:
             x, y = position.move_position
@@ -76,6 +77,7 @@ class _Card:
             # nothing bad actually happened we just checked outside the map bounds
             pass
 
+    # Checks that space is free of walls
     def validate_attack(self, position: Position):
         try:
             x, y = position.move_position

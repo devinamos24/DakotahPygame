@@ -17,11 +17,7 @@ class Direction(IntEnum):
     west = 4
 
 
-"""
-An actor is anything that can move around and interact with the world/level including the player
-"""
-
-
+# An actor is anything that can move around and interact with the world/level including the player
 class _Actor:
     def __init__(self, x: int, y: int, health: int, sprite_id: TextureIndices, level: "Level",
                  input_handler: "_InputHandler"):
@@ -33,7 +29,6 @@ class _Actor:
         self.level = level
         self.input_handler = input_handler
 
-    # TODO make a list of move throughable dumb objects and store a move throughable boolean on smart objects and check that
     def check_valid_move(self, x, y) -> bool or list:
         if self.level.Stage_Layer[y][x] != TextureIndices.wall:
             collided_actors = [actor for actor in self.level.actors if actor.x == x and actor.y == y]
