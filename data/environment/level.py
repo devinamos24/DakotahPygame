@@ -27,20 +27,6 @@ class Level:
         for actor in self.actors:
             actor.update(events)
 
-        # for y, row in enumerate(self.actors):
-        #     for x, tile_id in enumerate(row):
-        #         if tile_id is not None:
-        #             tile_id.update(events)
-
-        # for pair in self.move_buffer:
-        #     start_x = pair[0]
-        #     start_y = pair[1]
-        #     end_x = pair[2]
-        #     end_y = pair[3]
-        #     self.actors[end_y][end_x] = self.actors[start_y][start_x]
-        #     self.actors[start_y][start_x] = None
-        #     self.move_buffer.remove(pair)
-
     def draw(self, screen):
 
         for y, row in enumerate(self.Stage_Layer):
@@ -49,11 +35,6 @@ class Level:
 
         for actor in self.actors:
             gfxengine.draw_on_grid(screen, actor.sprite_id, actor.x, actor.y)
-
-        # for y, row in enumerate(self.actors):
-        #     for x, tile_id in enumerate(row):
-        #         if tile_id is not None:
-        #             gfxengine.draw_on_grid(screen, tile_id.sprite_id, x, y)
 
         self.player_hand.draw(screen)
 
@@ -137,10 +118,5 @@ class Level:
         player.hand.add_card(BishopCard())
         player.hand.add_card(LightningBoltCard())
         self.actors.append(player)
-        self.spawn_enemy_randomly(Scarecrow)
-        self.spawn_enemy_randomly(Scarecrow)
-        self.spawn_enemy_randomly(Scarecrow)
-        self.spawn_enemy_randomly(Scarecrow)
-        self.spawn_enemy_randomly(Scarecrow)
         self.spawn_enemy_randomly(Scarecrow)
         self.spawn_enemy_randomly(Scarecrow)
