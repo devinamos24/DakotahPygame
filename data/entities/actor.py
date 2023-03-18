@@ -110,3 +110,8 @@ class Scarecrow(_Actor):
     def __init__(self, x: int, y: int, level: "Level", input_handler: "_InputHandler"):
         _Actor.__init__(self, x, y, 5, TextureIndices.scarecrow, level, input_handler)
 
+    def take_damage(self, damage: "Damage" or None):
+        if damage is not None:
+            self.health -= damage.damage_amount
+            if self.health <= 0:
+                self.die()

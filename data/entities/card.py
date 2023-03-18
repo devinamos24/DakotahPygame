@@ -108,6 +108,35 @@ class _Card:
         except Exception:
             # nothing bad actually happened we just checked outside the map bounds
             pass
+        
+    # get the direction of an attack (cardinal)
+    def get_direction(self, x, y):
+            self_x, self_y = self.owner.x, self.owner.y
+            x = self_x - x
+            y = self_y - y
+            if x == 0 and y == 1:
+                return 'North'
+            elif x == 0 and y == -1:
+                return 'South'
+            elif x == -1 and y == 0:
+                return 'East'
+            elif x == 1 and y == 0:
+                return 'West'
+            else:
+                raise Exception
+    
+    # move an attack by 1 (cardinal)
+    def direction_move(self, x, y, direction):
+            if direction == 'North':
+                return x,(y - 1)
+            elif direction == 'South':
+                return x,(y + 1)
+            elif direction == 'East':
+                return (x + 1), y
+            elif direction == 'West':
+                return (x - 1), y
+            else:
+                raise Exception
 
     def activate(self, indicator_list):
         # this method must be overidden by subclasses
@@ -234,7 +263,9 @@ class LightningBoltCard(_Card):
     def activate(self, indicator_list):
         def try_to_do_damage(x, y):
             try:
-                self.owner.level.actors[y][x].take_damage(self.damage)
+                for actor in self.owner.level.actors:
+                    if actor.x == x and actor.y == y:
+                        actor.take_damage(self.damage)
             except:
                 pass
 
@@ -266,16 +297,19 @@ class FireBallCard(_Card):
         self.damage = Damage('Fire', 999)
 
     def activate(self, indicator_list):
+            
         def try_to_do_damage(x, y):
-            while True:
+            direction = self.get_direction(x, y)
+            end = False
+            while not end:
                 if self.owner.check_valid_attack(x,y):
-                    try:
-                        self.owner.level.actors[y][x].take_damage(self.damage)
-                    except:
-                        x = x + 1
-                        y = y + 1
+                    for actor in self.owner.level.actors:
+                        if actor.x == x and actor.y == y:
+                            actor.take_damage(self.damage)
+                            end = True
+                    x,y = self.direction_move(x, y, direction)
                 else:
-                    break
+                    end = True
 
         def attack(x, y):
             return lambda: try_to_do_damage(x, y)
