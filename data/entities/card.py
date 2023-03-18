@@ -17,7 +17,7 @@ class Indicator:
         self.action()
 
 
-class _damage:
+class Damage:
     def __init__(self, damage_type, damage_amount):
         self.damage_type = damage_type
         self.damage_amount = damage_amount
@@ -27,6 +27,7 @@ class Position:
     def __init__(self, move_position, check_position):
         self.move_position = move_position
         self.check_position = check_position
+
 
 class _Card:
     def __init__(self, name):
@@ -61,6 +62,7 @@ class _Card:
                                 return False
                             else:
                                 return True
+
                         if check_and_set():
                             result = True
                         else:
@@ -91,6 +93,7 @@ class _Card:
                                 return False
                             else:
                                 return True
+
                         if check_and_set():
                             result = True
                         else:
@@ -112,27 +115,31 @@ class _Card:
     def check_click(self, x, y):
         pass
 
+
 class RookCard(_Card):
     def __init__(self):
         _Card.__init__(self, "rook")
         self.texture_id = TextureIndices.rook_card
 
     def activate(self, indicator_list):
-        def move(new_x, new_y): return lambda: (self.owner.move(new_x, new_y))
+        def move(new_x, new_y):
+            return lambda: (self.owner.move(new_x, new_y))
+
         moves = []
-        #south
-        moves.append(Position((0, 1), ([(0, 1)], [(0, 1)]))) #python doesnt like only having 1 position check and simplifies it thus messes with the data structure
+        # south
+        moves.append(Position((0, 1), ([(0, 1)], [(0,
+                                                   1)])))  # python doesnt like only having 1 position check and simplifies it thus messes with the data structure
         moves.append(Position((0, 2), ([(0, 1)], [(0, 2)])))
         moves.append(Position((0, 3), ([(0, 1)], [(0, 2)], [(0, 3)])))
-        #north
+        # north
         moves.append(Position((0, -1), ([(0, -1)], [(0, -1)])))
         moves.append(Position((0, -2), ([(0, -1)], [(0, -2)])))
         moves.append(Position((0, -3), ([(0, -1)], [(0, -2)], [(0, -3)])))
-        #east
+        # east
         moves.append(Position((1, 0), ([(1, 0)], [(1, 0)])))
         moves.append(Position((2, 0), ([(1, 0)], [(2, 0)])))
         moves.append(Position((3, 0), ([(1, 0)], [(2, 0)], [(3, 0)])))
-        #west
+        # west
         moves.append(Position((-1, 0), ([(-1, 0)], [(-1, 0)])))
         moves.append(Position((-2, 0), ([(-1, 0)], [(-2, 0)])))
         moves.append(Position((-3, 0), ([(-1, 0)], [(-2, 0)], [(-3, 0)])))
@@ -151,24 +158,31 @@ class BishopCard(_Card):
         self.texture_id = TextureIndices.bishop_card
 
     def activate(self, indicator_list):
-        def move(new_x, new_y): return lambda: (self.owner.move(new_x, new_y))
+        def move(new_x, new_y):
+            return lambda: (self.owner.move(new_x, new_y))
+
         moves = []
-        #Down Right
+        # Down Right
         moves.append(Position((1, 1), ([(1, 1)], [(1, 0), [0, 1]])))
         moves.append(Position((2, 2), ([(1, 1)], [(2, 2)], [(1, 0), [0, 1]], [(2, 1), (1, 2)])))
-        moves.append(Position((3, 3), ([(1, 1)], [(2, 2)], [(1, 0), [0, 1]], [(2, 1), (1, 2)], [(3, 3)], [(3, 2), (2, 3)])))
-        #Up Right
+        moves.append(
+            Position((3, 3), ([(1, 1)], [(2, 2)], [(1, 0), [0, 1]], [(2, 1), (1, 2)], [(3, 3)], [(3, 2), (2, 3)])))
+        # Up Right
         moves.append(Position((1, -1), ([(1, -1)], [(1, 0), [0, -1]])))
         moves.append(Position((2, -2), ([(1, -1)], [(2, -2)], [(1, 0), [0, -1]], [(2, -1), (1, -2)])))
-        moves.append(Position((3, -3), ([(1, -1)], [(2, -2)], [(3, -3)], [(1, 0), [0, -1]], [(2, -1), (1, -2)], [(3, -3)], [(3, -2), (2, -3)])))
-        #Down Left
+        moves.append(Position((3, -3), (
+        [(1, -1)], [(2, -2)], [(3, -3)], [(1, 0), [0, -1]], [(2, -1), (1, -2)], [(3, -3)], [(3, -2), (2, -3)])))
+        # Down Left
         moves.append(Position((-1, 1), ([(-1, 1)], [(-1, 0), [0, 1]])))
         moves.append(Position((-2, 2), ([(-1, 1)], [(-2, 2)], [(-1, 0), [0, 1]], [(-2, 1), (-1, 2)])))
-        moves.append(Position((-3, 3), ([(-1, 1)], [(-2, 2)], [(-3, 3)], [(-1, 0), [0, 1]], [(-2, 1), (-1, 2)], [(-3, 3)], [(-3, 2), (-2, 3)])))
-        #Up Left
+        moves.append(Position((-3, 3), (
+        [(-1, 1)], [(-2, 2)], [(-3, 3)], [(-1, 0), [0, 1]], [(-2, 1), (-1, 2)], [(-3, 3)], [(-3, 2), (-2, 3)])))
+        # Up Left
         moves.append(Position((-1, -1), ([(-1, -1)], [(-1, 0), [0, -1]])))
         moves.append(Position((-2, -2), ([(-1, -1)], [(-2, -2)], [(-1, 0), [0, -1]], [(-2, -1), (-1, -2)])))
-        moves.append(Position((-3, -3), ([(-1, -1)], [(-2, -2)], [(-3, -3)], [(-1, 0), [0, -1]], [(-2, -1), (-1, -2)], [(-3, -3)], [(-3, -2), (-2, -3)])))
+        moves.append(Position((-3, -3), (
+        [(-1, -1)], [(-2, -2)], [(-3, -3)], [(-1, 0), [0, -1]], [(-2, -1), (-1, -2)], [(-3, -3)],
+        [(-3, -2), (-2, -3)])))
         if self.owner is not None:
             for _move in moves:
                 valid_move = self.validate_move(_move)
@@ -176,7 +190,7 @@ class BishopCard(_Card):
                     x, y = valid_move
                     indicator_list.append(
                         Indicator(x, y, TextureIndices.move_indicator, move(x, y)))
-                    
+
 
 class KnightCard(_Card):
     def __init__(self):
@@ -184,20 +198,22 @@ class KnightCard(_Card):
         self.texture_id = TextureIndices.knight_card
 
     def activate(self, indicator_list):
-        def move(new_x, new_y): return lambda: (self.owner.move(new_x, new_y))
+        def move(new_x, new_y):
+            return lambda: (self.owner.move(new_x, new_y))
+
         moves = []
-        #Down Right
-        moves.append(Position((2, 1), ([(1, 0),(0, 1)], [(1, 1),(1, 0)],[(1, 1),(2, 0)])))
-        moves.append(Position((1, 2), ([(0, 1),(1, 0)], [(1, 1),(0, 1)],[(1, 1),(0, 2)])))
-        #Down Left
-        moves.append(Position((-2, 1), ([(-1, 0),(0, 1)], [(-1, 1),(-1, 0)],[(-1, 1),(-2, 0)])))
-        moves.append(Position((-1, 2), ([(0, 1),(-1, 0)], [(-1, 1),(0, 1)],[(-1, 1),(0, 2)])))
-        #Up Right
-        moves.append(Position((2, -1), ([(1, 0),(0, -1)], [(1, -1),(1, 0)],[(1, -1),(2, 0)])))
-        moves.append(Position((1, -2), ([(0, -1),(1, 0)], [(1, -1),(0, -1)],[(1, -1),(0, -2)])))
-        #Down Right
-        moves.append(Position((-2, -1), ([(-1, 0),(0, -1)], [(-1, -1),(-1, 0)],[(-1, -1),(-2, 0)])))
-        moves.append(Position((-1, -2), ([(0, -1),(-1, 0)], [(-1, -1),(0, -1)],[(-1, -1),(0, -2)])))
+        # Down Right
+        moves.append(Position((2, 1), ([(1, 0), (0, 1)], [(1, 1), (1, 0)], [(1, 1), (2, 0)])))
+        moves.append(Position((1, 2), ([(0, 1), (1, 0)], [(1, 1), (0, 1)], [(1, 1), (0, 2)])))
+        # Down Left
+        moves.append(Position((-2, 1), ([(-1, 0), (0, 1)], [(-1, 1), (-1, 0)], [(-1, 1), (-2, 0)])))
+        moves.append(Position((-1, 2), ([(0, 1), (-1, 0)], [(-1, 1), (0, 1)], [(-1, 1), (0, 2)])))
+        # Up Right
+        moves.append(Position((2, -1), ([(1, 0), (0, -1)], [(1, -1), (1, 0)], [(1, -1), (2, 0)])))
+        moves.append(Position((1, -2), ([(0, -1), (1, 0)], [(1, -1), (0, -1)], [(1, -1), (0, -2)])))
+        # Down Right
+        moves.append(Position((-2, -1), ([(-1, 0), (0, -1)], [(-1, -1), (-1, 0)], [(-1, -1), (-2, 0)])))
+        moves.append(Position((-1, -2), ([(0, -1), (-1, 0)], [(-1, -1), (0, -1)], [(-1, -1), (0, -2)])))
         if self.owner is not None:
             for _move in moves:
                 valid_move = self.validate_move(_move)
@@ -211,12 +227,18 @@ class LightningBoltCard(_Card):
     def __init__(self):
         _Card.__init__(self, "lightning_bolt")
         self.texture_id = TextureIndices.lightning_bolt
-        damage = _damage('Lightning', 1)
-    
-    def card_damage(self):
-        return _damage('Lightning', 1)
+        self.damage = Damage('Lightning', 999)
 
     def activate(self, indicator_list):
+        def try_to_do_damage(x, y):
+            try:
+                self.owner.level.Actor_Layer[y][x].take_damage(self.damage)
+            except:
+                pass
+
+        def attack(x, y):
+            return lambda: try_to_do_damage(x, y)
+
         attack_position = []
         attack_position.append(Position((1, 1), ([(1, 1)], [(1, 1)])))
         attack_position.append(Position((-1, 1), ([(-1, 1)], [(-1, 1)])))
@@ -232,4 +254,4 @@ class LightningBoltCard(_Card):
                 if valid_position is not None:
                     x, y = valid_position
                     indicator_list.append(
-                        Indicator(x, y, TextureIndices.move_indicator, self.owner.do_damage(self.card_damage, x, y)))
+                        Indicator(x, y, TextureIndices.move_indicator, attack(x, y)))

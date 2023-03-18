@@ -2,9 +2,11 @@ from enum import IntEnum
 from data.engine import gfxengine
 from data.engine.gfxengine import TextureIndices
 from typing import TYPE_CHECKING
+import data.entities.card as card
 
 if TYPE_CHECKING:
     from data.entities.input_handler import _InputHandler
+    from data.entities.card import Damage
     from data.environment.level import Level
 
 
@@ -32,15 +34,12 @@ class _Actor:
         self.input_handler = input_handler
 
     # TODO make a list of move throughable dumb objects and store a move throughable boolean on smart objects and check that
-    def do_nothing(self):
-        return
-
     def check_valid_move(self, x, y) -> bool:
         if self.level.Stage_Layer[y][x] != TextureIndices.wall:
             if self.level.Actor_Layer[y][x] is None:
                 return True
         return False
-    
+
     def check_valid_attack(self, x, y) -> bool:
         if self.level.Stage_Layer[y][x] != TextureIndices.wall:
             return True
@@ -65,19 +64,22 @@ class _Actor:
         else:
             raise Exception(f"Direction: {direction} is not valid!")
         if self.check_valid_move(new_x, new_y):
-            self.level.move_buffer.append((self.x, self.y, new_x, new_y))
-            self.x = new_x
-            self.y = new_y
+            self.move(new_x, new_y)
+            return
+        if self.check_valid_attack(new_x, new_y):
+            self.level.Actor_Layer[new_y][new_x].take_damage(self.do_damage())
 
-    def take_damage(self, damage):
-        self.health = self.health - damage.damage_amount
+    def take_damage(self, damage: "Damage" or None):
+        if damage is not None:
+            self.health -= damage.damage_amount
+            if self.health <= 0:
+                self.die()
 
-    def do_damage(self, damage, x, y):
-        opponent = self.level.Actor_Layer[y][x]
-        if opponent != None:
-            return lambda : (opponent.take_damage(damage.damage_type, damage.damage_amount))
-        else:
-            return lambda : (self.do_nothing())
+    def do_damage(self) -> "Damage" or None:
+        return card.Damage("Physical", 1)
+
+    def die(self):
+        self.level.Actor_Layer[self.y][self.x] = None
 
     def give_hand(self, hand):
         self.hand = hand
@@ -95,7 +97,18 @@ class _Actor:
 
 
 class Player(_Actor):
-    def __init__(self, x: int, y: int, health: int, level: "Level",
+    def __init__(self, x: int, y: int, level: "Level",
                  input_handler: "_InputHandler"):
-        _Actor.__init__(self, x, y, health, TextureIndices.player, level, input_handler)
+        _Actor.__init__(self, x, y, 10, TextureIndices.player, level, input_handler)
+
+    def take_damage(self, damage: "Damage" or None):
+        if damage is not None:
+            self.health -= damage.damage_amount
+            if self.health <= 0:
+                self.die()
+
+
+class Scarecrow(_Actor):
+    def __init__(self, x: int, y: int, level: "Level", input_handler: "_InputHandler"):
+        _Actor.__init__(self, x, y, 5, TextureIndices.scarecrow, level, input_handler)
 

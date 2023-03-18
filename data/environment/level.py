@@ -1,12 +1,10 @@
 import random
 
-import pygame
-
 from ..engine import gfxengine
 from ..engine.gfxengine import TextureIndices
 from ..entities.card import RookCard, BishopCard, KnightCard, LightningBoltCard
-from ..entities.input_handler import PlayerInputHandler
-from ..entities.actor import Player
+from ..entities.input_handler import PlayerInputHandler, AIInputHandler
+from ..entities.actor import Player, Scarecrow
 from ..ui.hand import Hand
 
 map_width, map_height = 15, 15
@@ -16,19 +14,15 @@ class Level:
     def __init__(self):
         self.player_hand = None
         self.Stage_Layer = [TextureIndices]
-
-        for i in range(map_height):
-            self.Stage_Layer.append([0] * map_width)
-
         self.Actor_Layer = []
-        self.move_buffer = []
         self.Mod_Stage_Layer = []
 
         for i in range(map_height):
+            self.Stage_Layer.append([0] * map_width)
             self.Actor_Layer.append([None] * map_width)
-
-        for i in range(map_height):
             self.Mod_Stage_Layer.append([None] * map_width)
+
+        self.move_buffer = []
 
     def update(self, events):
         for y, row in enumerate(self.Actor_Layer):
@@ -97,6 +91,17 @@ class Level:
                 if num_walls >= 3:
                     self.Stage_Layer[y][x] = TextureIndices.wall
 
+    def spawn_enemy_randomly(self, enemy_class):
+        while True:
+            spawn_x = random.randint(1, map_width-1)
+            spawn_y = random.randint(1, map_height-1)
+
+            if self.Stage_Layer[spawn_y][spawn_x] == 0:
+                if self.Actor_Layer[spawn_y][spawn_x] is None:
+                    enemy = enemy_class(spawn_x, spawn_y, self, AIInputHandler())
+                    self.Actor_Layer[spawn_y][spawn_x] = enemy
+                    return
+
     def spawn_player(self):
         # Set the player starting position
         spawn_x = 1
@@ -120,10 +125,11 @@ class Level:
                 continue
             # Flip
             spawn_x, spawn_y = spawn_y, spawn_x
-        player = Player(spawn_x, spawn_y, 10, self, PlayerInputHandler())
+        player = Player(spawn_x, spawn_y, self, PlayerInputHandler())
         self.player_hand = Hand(player)
         player.hand.add_card(RookCard())
         player.hand.add_card(KnightCard())
         player.hand.add_card(BishopCard())
         player.hand.add_card(LightningBoltCard())
         self.Actor_Layer[spawn_y][spawn_x] = player
+        self.spawn_enemy_randomly(Scarecrow)

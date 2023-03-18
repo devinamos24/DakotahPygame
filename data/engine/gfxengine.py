@@ -8,7 +8,7 @@ import pygame
 IMAGES_FORMAT = ".png"
 SCREEN_RESOLUTION = (640, 640)
 TILE_SIDES = 32
-
+HORIZONTAL_OFFSET = 80
 
 @unique
 class TextureIndices(IntEnum):
@@ -22,6 +22,7 @@ class TextureIndices(IntEnum):
     shuffle_card = 7
     lightning_bolt = 8
     fire_ball = 9
+    scarecrow = 10
 
 
 path = os.path.join("..", "resources")
@@ -67,7 +68,7 @@ This function draws textures based on grid x and y instead of pixel x and y
 
 
 def draw_on_grid(screen: Union[pygame.Surface, pygame.SurfaceType], texture_id: TextureIndices, x: int, y: int):
-    x = x * TILE_SIDES
+    x = x * TILE_SIDES + HORIZONTAL_OFFSET
     y = y * TILE_SIDES
     screen.blit(graphics[texture_id], (x, y))
 
