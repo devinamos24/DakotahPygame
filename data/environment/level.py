@@ -4,7 +4,7 @@ from ..engine import gfxengine
 from ..engine.gfxengine import TextureIndices
 from ..entities.card import RookCard, BishopCard, KnightCard, LightningBoltCard, FireBallCard
 from ..entities.input_handler import PlayerInputHandler, AIInputHandler
-from ..entities.actor import Player, Scarecrow
+from ..entities.actor import Player, Scarecrow, Coordinate
 from ..ui.hand import Hand
 
 map_width, map_height = 15, 15
@@ -34,7 +34,7 @@ class Level:
                 gfxengine.draw_on_grid(screen, tile_id, x, y)
 
         for actor in self.actors:
-            gfxengine.draw_on_grid(screen, actor.sprite_id, actor.x, actor.y)
+            gfxengine.draw_on_grid(screen, actor.sprite_id, actor.coordinate.x, actor.coordinate.y)
 
         self.player_hand.draw(screen)
 
@@ -81,10 +81,10 @@ class Level:
         while True:
             spawn_x = random.randint(1, map_width-1)
             spawn_y = random.randint(1, map_height-1)
-
+            coordinate = Coordinate(spawn_x, spawn_y)
             if self.Stage_Layer[spawn_y][spawn_x] == 0:
-                if len([actor for actor in self.actors if actor.x == spawn_x and actor.y == spawn_y]) == 0:
-                    enemy = enemy_class(spawn_x, spawn_y, self, AIInputHandler())
+                if len([actor for actor in self.actors if actor.coordinate == coordinate]) == 0:
+                    enemy = enemy_class(coordinate, self, AIInputHandler())
                     self.actors.append(enemy)
                     return
 
@@ -111,7 +111,7 @@ class Level:
                 continue
             # Flip
             spawn_x, spawn_y = spawn_y, spawn_x
-        player = Player(spawn_x, spawn_y, self, PlayerInputHandler())
+        player = Player(Coordinate(spawn_x, spawn_y), self, PlayerInputHandler())
         self.player_hand = Hand(player)
         player.hand.add_card(RookCard())
         player.hand.add_card(KnightCard())

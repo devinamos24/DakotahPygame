@@ -1,4 +1,4 @@
-from enum import IntEnum
+from enum import Enum
 from data.engine import gfxengine
 from data.engine.gfxengine import TextureIndices
 from typing import TYPE_CHECKING
@@ -10,11 +10,27 @@ if TYPE_CHECKING:
     from data.environment.level import Level
 
 
-class Direction(IntEnum):
-    north = 1
-    east = 2
-    south = 3
-    west = 4
+class Coordinate:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __add__(self, other):
+        self.x += other.x
+        self.y += other.y
+        return self
+
+    def __eq__(self, other):
+        if self.x == other.x and self.y == other.y:
+            return True
+        return False
+
+
+class Direction(Enum):
+    N = Coordinate(0, -1)
+    E = Coordinate(1, 0)
+    S = Coordinate(0, 1)
+    W = Coordinate(-1, 0)
 
 
 class Energy:
@@ -40,10 +56,9 @@ class Energy:
 
 # An actor is anything that can move around and interact with the world/level including the player
 class _Actor:
-    def __init__(self, x: int, y: int, health: int, turn_energy: int, sprite_id: TextureIndices, level: "Level",
+    def __init__(self, coordinate, health: int, turn_energy: int, sprite_id: TextureIndices, level: "Level",
                  input_handler: "_InputHandler"):
-        self.x = x
-        self.y = y
+        self.coordinate = coordinate
         self.health = health
         self.hand = None
         self.sprite_id = sprite_id
@@ -51,40 +66,28 @@ class _Actor:
         self.input_handler = input_handler
         self.energy = Energy(turn_energy)
 
-    def check_valid_move(self, x, y) -> bool or list:
-        if self.level.Stage_Layer[y][x] != TextureIndices.wall:
-            collided_actors = [actor for actor in self.level.actors if actor.x == x and actor.y == y]
+    def check_valid_move(self, coordinate) -> bool or list:
+        if self.level.Stage_Layer[coordinate.y][coordinate.x] != TextureIndices.wall:
+            collided_actors = [actor for actor in self.level.actors if actor.coordinate == coordinate]
             if len(collided_actors) == 0:
                 return False
             else:
                 return collided_actors
         return True
 
-    def check_valid_attack(self, x, y) -> bool:
-        if self.level.Stage_Layer[y][x] != TextureIndices.wall:
+    def check_valid_attack(self, coordinate) -> bool:
+        if self.level.Stage_Layer[coordinate.y][coordinate.x] != TextureIndices.wall:
             return True
         return False
 
-    def move(self, new_x, new_y):
-        self.x = new_x
-        self.y = new_y
+    def move(self, coordinate):
+        self.coordinate = coordinate
 
     def move_cardinal(self, direction: Direction) -> bool:
-        new_x = self.x
-        new_y = self.y
-        if direction == Direction.north:
-            new_y -= 1
-        elif direction == Direction.east:
-            new_x += 1
-        elif direction == Direction.south:
-            new_y += 1
-        elif direction == Direction.west:
-            new_x -= 1
-        else:
-            raise Exception(f"Direction: {direction} is not valid!")
-        collided_actors = self.check_valid_move(new_x, new_y)
+        coordinate = self.coordinate + direction.value
+        collided_actors = self.check_valid_move(coordinate)
         if not collided_actors and isinstance(collided_actors, bool):
-            self.move(new_x, new_y)
+            self.move(coordinate)
             return True
         elif collided_actors and not isinstance(collided_actors, bool):
             for actor in collided_actors:
@@ -113,16 +116,16 @@ class _Actor:
             action.execute(self)
 
     def draw(self, screen):
-        gfxengine.draw_on_grid(screen, self.sprite_id, self.x, self.y)
+        gfxengine.draw_on_grid(screen, self.sprite_id, self.coordinate.x, self.coordinate.y)
 
     def click(self, x, y):
         pass
 
 
 class Player(_Actor):
-    def __init__(self, x: int, y: int, level: "Level",
+    def __init__(self, coordinate: Coordinate, level: "Level",
                  input_handler: "_InputHandler"):
-        _Actor.__init__(self, x, y, 10, 3, TextureIndices.player, level, input_handler)
+        _Actor.__init__(self, coordinate, 10, 3, TextureIndices.player, level, input_handler)
 
     def take_damage(self, damage: "Damage" or None):
         if damage is not None:
@@ -132,8 +135,8 @@ class Player(_Actor):
 
 
 class Scarecrow(_Actor):
-    def __init__(self, x: int, y: int, level: "Level", input_handler: "_InputHandler"):
-        _Actor.__init__(self, x, y, 5, 2, TextureIndices.scarecrow, level, input_handler)
+    def __init__(self, coordinate: Coordinate, level: "Level", input_handler: "_InputHandler"):
+        _Actor.__init__(self, coordinate, 5, 2, TextureIndices.scarecrow, level, input_handler)
 
     def take_damage(self, damage: "Damage" or None):
         if damage is not None:

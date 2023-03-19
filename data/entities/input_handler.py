@@ -21,10 +21,10 @@ class _InputHandler:
 class PlayerInputHandler(_InputHandler):
     def __init__(self):
         _InputHandler.__init__(self)
-        self.bind_command(pygame.K_UP, action.MoveAction(actor.Direction.north))
-        self.bind_command(pygame.K_RIGHT, action.MoveAction(actor.Direction.east))
-        self.bind_command(pygame.K_DOWN, action.MoveAction(actor.Direction.south))
-        self.bind_command(pygame.K_LEFT, action.MoveAction(actor.Direction.west))
+        self.bind_command(pygame.K_UP, action.MoveAction(actor.Direction.N))
+        self.bind_command(pygame.K_RIGHT, action.MoveAction(actor.Direction.E))
+        self.bind_command(pygame.K_DOWN, action.MoveAction(actor.Direction.S))
+        self.bind_command(pygame.K_LEFT, action.MoveAction(actor.Direction.W))
 
     def handle_input(self, events) -> action._Action or None:
         for event in events:
