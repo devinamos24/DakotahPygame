@@ -1,8 +1,6 @@
-import pygame
+import functools
 
-from data.engine import gfxengine
 from data.engine.gfxengine import TextureIndices
-from data.entities.action import _Action
 from data.entities.actor import _Actor
 
 
@@ -30,8 +28,9 @@ class Position:
 
 
 class _Card:
-    def __init__(self, name):
+    def __init__(self, name, energy_cost):
         self.name = name
+        self.energy_cost = energy_cost
         self.owner = None
         # all cards that inherit this one must have a texture id: ABSTRACT PROPERTY - self.texture_id
         # all cards must be clicked to activate, and can only be on screen if they are in a hand,
@@ -108,35 +107,35 @@ class _Card:
         except Exception:
             # nothing bad actually happened we just checked outside the map bounds
             pass
-        
+
     # get the direction of an attack (cardinal)
     def get_direction(self, x, y):
-            self_x, self_y = self.owner.x, self.owner.y
-            x = self_x - x
-            y = self_y - y
-            if x == 0 and y == 1:
-                return 'North'
-            elif x == 0 and y == -1:
-                return 'South'
-            elif x == -1 and y == 0:
-                return 'East'
-            elif x == 1 and y == 0:
-                return 'West'
-            else:
-                raise Exception
-    
+        self_x, self_y = self.owner.x, self.owner.y
+        x = self_x - x
+        y = self_y - y
+        if x == 0 and y == 1:
+            return 'North'
+        elif x == 0 and y == -1:
+            return 'South'
+        elif x == -1 and y == 0:
+            return 'East'
+        elif x == 1 and y == 0:
+            return 'West'
+        else:
+            raise Exception
+
     # move an attack by 1 (cardinal)
     def direction_move(self, x, y, direction):
-            if direction == 'North':
-                return x,(y - 1)
-            elif direction == 'South':
-                return x,(y + 1)
-            elif direction == 'East':
-                return (x + 1), y
-            elif direction == 'West':
-                return (x - 1), y
-            else:
-                raise Exception
+        if direction == 'North':
+            return x, (y - 1)
+        elif direction == 'South':
+            return x, (y + 1)
+        elif direction == 'East':
+            return (x + 1), y
+        elif direction == 'West':
+            return (x - 1), y
+        else:
+            raise Exception
 
     def activate(self, indicator_list):
         # this method must be overidden by subclasses
@@ -149,7 +148,7 @@ class _Card:
 
 class RookCard(_Card):
     def __init__(self):
-        _Card.__init__(self, "rook")
+        _Card.__init__(self, "rook", 1)
         self.texture_id = TextureIndices.rook_card
 
     def activate(self, indicator_list):
@@ -185,7 +184,7 @@ class RookCard(_Card):
 
 class BishopCard(_Card):
     def __init__(self):
-        _Card.__init__(self, "bishop")
+        _Card.__init__(self, "bishop", 1)
         self.texture_id = TextureIndices.bishop_card
 
     def activate(self, indicator_list):
@@ -202,18 +201,18 @@ class BishopCard(_Card):
         moves.append(Position((1, -1), ([(1, -1)], [(1, 0), [0, -1]])))
         moves.append(Position((2, -2), ([(1, -1)], [(2, -2)], [(1, 0), [0, -1]], [(2, -1), (1, -2)])))
         moves.append(Position((3, -3), (
-        [(1, -1)], [(2, -2)], [(3, -3)], [(1, 0), [0, -1]], [(2, -1), (1, -2)], [(3, -3)], [(3, -2), (2, -3)])))
+            [(1, -1)], [(2, -2)], [(3, -3)], [(1, 0), [0, -1]], [(2, -1), (1, -2)], [(3, -3)], [(3, -2), (2, -3)])))
         # Down Left
         moves.append(Position((-1, 1), ([(-1, 1)], [(-1, 0), [0, 1]])))
         moves.append(Position((-2, 2), ([(-1, 1)], [(-2, 2)], [(-1, 0), [0, 1]], [(-2, 1), (-1, 2)])))
         moves.append(Position((-3, 3), (
-        [(-1, 1)], [(-2, 2)], [(-3, 3)], [(-1, 0), [0, 1]], [(-2, 1), (-1, 2)], [(-3, 3)], [(-3, 2), (-2, 3)])))
+            [(-1, 1)], [(-2, 2)], [(-3, 3)], [(-1, 0), [0, 1]], [(-2, 1), (-1, 2)], [(-3, 3)], [(-3, 2), (-2, 3)])))
         # Up Left
         moves.append(Position((-1, -1), ([(-1, -1)], [(-1, 0), [0, -1]])))
         moves.append(Position((-2, -2), ([(-1, -1)], [(-2, -2)], [(-1, 0), [0, -1]], [(-2, -1), (-1, -2)])))
         moves.append(Position((-3, -3), (
-        [(-1, -1)], [(-2, -2)], [(-3, -3)], [(-1, 0), [0, -1]], [(-2, -1), (-1, -2)], [(-3, -3)],
-        [(-3, -2), (-2, -3)])))
+            [(-1, -1)], [(-2, -2)], [(-3, -3)], [(-1, 0), [0, -1]], [(-2, -1), (-1, -2)], [(-3, -3)],
+            [(-3, -2), (-2, -3)])))
         if self.owner is not None:
             for _move in moves:
                 valid_move = self.validate_move(_move)
@@ -225,7 +224,7 @@ class BishopCard(_Card):
 
 class KnightCard(_Card):
     def __init__(self):
-        _Card.__init__(self, "knight")
+        _Card.__init__(self, "knight", 1)
         self.texture_id = TextureIndices.knight_card
 
     def activate(self, indicator_list):
@@ -256,7 +255,7 @@ class KnightCard(_Card):
 
 class LightningBoltCard(_Card):
     def __init__(self):
-        _Card.__init__(self, "lightning_bolt")
+        _Card.__init__(self, "lightning_bolt", 1)
         self.texture_id = TextureIndices.lightning_bolt
         self.damage = Damage('Lightning', 999)
 
@@ -266,6 +265,7 @@ class LightningBoltCard(_Card):
                 for actor in self.owner.level.actors:
                     if actor.x == x and actor.y == y:
                         actor.take_damage(self.damage)
+                        # add logic to try to damage the spots around this one
             except:
                 pass
 
@@ -288,26 +288,26 @@ class LightningBoltCard(_Card):
                     x, y = valid_position
                     indicator_list.append(
                         Indicator(x, y, TextureIndices.move_indicator, attack(x, y)))
-                    
+
 
 class FireBallCard(_Card):
     def __init__(self):
-        _Card.__init__(self, "fire_ball")
+        _Card.__init__(self, "fire_ball", 1)
         self.texture_id = TextureIndices.fire_ball
         self.damage = Damage('Fire', 999)
 
     def activate(self, indicator_list):
-            
+
         def try_to_do_damage(x, y):
             direction = self.get_direction(x, y)
             end = False
             while not end:
-                if self.owner.check_valid_attack(x,y):
+                if self.owner.check_valid_attack(x, y):
                     for actor in self.owner.level.actors:
                         if actor.x == x and actor.y == y:
                             actor.take_damage(self.damage)
                             end = True
-                    x,y = self.direction_move(x, y, direction)
+                    x, y = self.direction_move(x, y, direction)
                 else:
                     end = True
 

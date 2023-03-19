@@ -16,7 +16,8 @@ class MoveAction(_Action):
         self.direction = direction
 
     def execute(self, actor: _Actor):
-        actor.move_cardinal(self.direction)
+        if actor.energy.current_energy > 0 and actor.move_cardinal(self.direction):
+            actor.energy.remove_energy(1)
         if actor.hand is not None:
             actor.hand.deselect_card()
 

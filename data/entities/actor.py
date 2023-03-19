@@ -17,9 +17,30 @@ class Direction(IntEnum):
     west = 4
 
 
+class Energy:
+    def __init__(self, turn_energy: int):
+        self.turn_energy = turn_energy
+        self.current_energy = turn_energy
+
+    def add_energy(self, energy: int):
+        self.current_energy += energy
+
+    def remove_energy(self, energy: int):
+        self.current_energy -= energy
+
+    def add_turn_energy(self, energy: int):
+        self.turn_energy += energy
+
+    def remove_turn_energy(self, energy: int):
+        self.turn_energy += energy
+
+    def reset_energy(self):
+        self.current_energy = self.turn_energy
+
+
 # An actor is anything that can move around and interact with the world/level including the player
 class _Actor:
-    def __init__(self, x: int, y: int, health: int, sprite_id: TextureIndices, level: "Level",
+    def __init__(self, x: int, y: int, health: int, turn_energy: int, sprite_id: TextureIndices, level: "Level",
                  input_handler: "_InputHandler"):
         self.x = x
         self.y = y
@@ -28,6 +49,7 @@ class _Actor:
         self.sprite_id = sprite_id
         self.level = level
         self.input_handler = input_handler
+        self.energy = Energy(turn_energy)
 
     def check_valid_move(self, x, y) -> bool or list:
         if self.level.Stage_Layer[y][x] != TextureIndices.wall:
@@ -47,7 +69,7 @@ class _Actor:
         self.x = new_x
         self.y = new_y
 
-    def move_cardinal(self, direction: Direction):
+    def move_cardinal(self, direction: Direction) -> bool:
         new_x = self.x
         new_y = self.y
         if direction == Direction.north:
@@ -63,9 +85,12 @@ class _Actor:
         collided_actors = self.check_valid_move(new_x, new_y)
         if not collided_actors and isinstance(collided_actors, bool):
             self.move(new_x, new_y)
+            return True
         elif collided_actors and not isinstance(collided_actors, bool):
             for actor in collided_actors:
                 actor.take_damage(self.do_damage())
+                return True
+        return False
 
     def take_damage(self, damage: "Damage" or None):
         if damage is not None:
@@ -97,7 +122,7 @@ class _Actor:
 class Player(_Actor):
     def __init__(self, x: int, y: int, level: "Level",
                  input_handler: "_InputHandler"):
-        _Actor.__init__(self, x, y, 10, TextureIndices.player, level, input_handler)
+        _Actor.__init__(self, x, y, 10, 3, TextureIndices.player, level, input_handler)
 
     def take_damage(self, damage: "Damage" or None):
         if damage is not None:
@@ -108,7 +133,7 @@ class Player(_Actor):
 
 class Scarecrow(_Actor):
     def __init__(self, x: int, y: int, level: "Level", input_handler: "_InputHandler"):
-        _Actor.__init__(self, x, y, 5, TextureIndices.scarecrow, level, input_handler)
+        _Actor.__init__(self, x, y, 5, 2, TextureIndices.scarecrow, level, input_handler)
 
     def take_damage(self, damage: "Damage" or None):
         if damage is not None:

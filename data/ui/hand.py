@@ -61,8 +61,9 @@ class Hand:
     def select_card(self, card: _Card):
         if self.selected_card != card:
             self.deselect_card()
-            self.selected_card = card
-            card.activate(self.indicators)
+            if card.energy_cost <= self.owner.energy.current_energy:
+                self.selected_card = card
+                card.activate(self.indicators)
 
     def click(self, x, y):
         for index, rect in enumerate(self.card_rects):
@@ -75,6 +76,7 @@ class Hand:
             if tile_clicked_x == indicator.x and tile_clicked_y == indicator.y:
                 indicator.activate()
                 self.indicators.clear()
+                self.owner.energy.remove_energy(self.selected_card.energy_cost)
                 self.remove_card(self.selected_card)
                 return
         self.deselect_card()
