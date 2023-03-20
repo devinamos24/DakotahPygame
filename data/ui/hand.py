@@ -10,6 +10,7 @@ import pygame
 from data.engine import gfxengine
 from data.entities.actor import _Actor
 from data.entities.card import _Card, Indicator
+from data.utility import movement
 
 SCREEN_WIDTH = 640
 
@@ -73,7 +74,8 @@ class Hand:
         for indicator in self.indicators:
             tile_clicked_x = int((x - 80) / 32)
             tile_clicked_y = int(y / 32)
-            if tile_clicked_x == indicator.x and tile_clicked_y == indicator.y:
+            coordinate = movement.Coordinate(tile_clicked_x, tile_clicked_y)
+            if indicator.coordinate == coordinate:
                 indicator.activate()
                 self.indicators.clear()
                 self.owner.energy.remove_energy(self.selected_card.energy_cost)
@@ -87,4 +89,4 @@ class Hand:
             gfxengine.draw(screen, card.texture_id, x, self.y)
 
         for indicator in self.indicators:
-            gfxengine.draw_on_grid(screen, indicator.indicator_type, indicator.x, indicator.y)
+            gfxengine.draw_on_grid(screen, indicator.indicator_type, indicator.coordinate)

@@ -67,9 +67,9 @@ This function draws textures based on grid x and y instead of pixel x and y
 """
 
 
-def draw_on_grid(screen: Union[pygame.Surface, pygame.SurfaceType], texture_id: TextureIndices, x: int, y: int):
-    x = x * TILE_SIDES + HORIZONTAL_OFFSET
-    y = y * TILE_SIDES
+def draw_on_grid(screen: Union[pygame.Surface, pygame.SurfaceType], texture_id: TextureIndices, coordinate):
+    x = coordinate.x * TILE_SIDES + HORIZONTAL_OFFSET
+    y = coordinate.y * TILE_SIDES
     screen.blit(graphics[texture_id], (x, y))
 
 

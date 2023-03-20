@@ -2,12 +2,12 @@ import functools
 
 from data.engine.gfxengine import TextureIndices
 from data.entities.actor import _Actor, Coordinate
+from data.utility import movement
 
 
 class Indicator:
-    def __init__(self, x, y, indicator_type, action):
-        self.x = x
-        self.y = y
+    def __init__(self, coordinate, indicator_type, action):
+        self.coordinate = coordinate
         self.indicator_type = indicator_type
         self.action = action
 
@@ -40,24 +40,21 @@ class _Card:
     def set_owner(self, new_owner):
         self.owner = new_owner
 
-    def _move(self, actor: _Actor, x, y):
-        # move actor where you want it
-        pass
+    # Create an anonymous function that moves the owner of the card
+    def _move(self, coordinate):
+        return lambda: (self.owner.move(coordinate))
 
     # Check that the space is free of walls and actors
     def validate_move(self, position: Position):
         try:
-            x, y = position.move_position
-            check_x = x + self.owner.coordinate.x
-            check_y = y + self.owner.coordinate.y
-            coordinate = Coordinate(check_x, check_y)
+            coordinate = Coordinate(position.move_position[0], position.move_position[1]) + self.owner.coordinate
             if not bool(self.owner.check_valid_move(coordinate)):
                 def check_or_position():
                     for or_set in position.check_position:
                         def check_and_set():
                             and_test = 0
                             for nx, ny in or_set:
-                                if bool(self.owner.check_valid_move(coordinate + Coordinate(nx, ny))):
+                                if bool(self.owner.check_valid_move(self.owner.coordinate + Coordinate(nx, ny))):
                                     and_test += 1
                             if len(or_set) == and_test:
                                 return False
@@ -69,7 +66,7 @@ class _Card:
                         else:
                             break
                     else:
-                        return check_x, check_y
+                        return coordinate
                     return None
 
                 return check_or_position()
@@ -80,17 +77,14 @@ class _Card:
     # Checks that space is free of walls
     def validate_attack(self, position: Position):
         try:
-            x, y = position.move_position
-            check_x = x + self.owner.coordinate.x
-            check_y = y + self.owner.coordinate.y
-            coordinate = Coordinate(check_x, check_y)
+            coordinate = Coordinate(position.move_position[0], position.move_position[1]) + self.owner.coordinate
             if self.owner.check_valid_attack(coordinate):
                 def check_or_position():
                     for or_set in position.check_position:
                         def check_and_set():
                             and_test = 0
                             for nx, ny in or_set:
-                                if not self.owner.check_valid_attack(coordinate + Coordinate(nx, ny)):
+                                if not self.owner.check_valid_attack(self.owner.coordinate + Coordinate(nx, ny)):
                                     and_test += 1
                             if len(or_set) == and_test:
                                 return False
@@ -102,7 +96,7 @@ class _Card:
                         else:
                             break
                     else:
-                        return check_x, check_y
+                        return coordinate
                     return None
 
                 return check_or_position()
@@ -111,33 +105,20 @@ class _Card:
             pass
 
     # get the direction of an attack (cardinal)
-    def get_direction(self, x, y):
-        self_x, self_y = self.owner.coordinate.x, self.owner.coordinate.y
-        x = self_x - x
-        y = self_y - y
-        if x == 0 and y == 1:
-            return 'North'
-        elif x == 0 and y == -1:
-            return 'South'
-        elif x == -1 and y == 0:
-            return 'East'
-        elif x == 1 and y == 0:
-            return 'West'
-        else:
-            raise Exception
+    def get_direction(self, coordinate):
+        return coordinate - self.owner.coordinate
+        # if coordinate == movement.Direction.N.value:
+        #     return movement.Direction.N
+        # elif coordinate == movement.Direction.S.value:
+        #     return movement.Direction.S
+        # elif coordinate == movement.Direction.E.value:
+        #     return movement.Direction.E
+        # elif coordinate == movement.Direction.W.value:
+        #     return movement.Direction.W
+        # else:
+        #     raise Exception
 
     # move an attack by 1 (cardinal)
-    def direction_move(self, x, y, direction):
-        if direction == 'North':
-            return x, (y - 1)
-        elif direction == 'South':
-            return x, (y + 1)
-        elif direction == 'East':
-            return (x + 1), y
-        elif direction == 'West':
-            return (x - 1), y
-        else:
-            raise Exception
 
     def activate(self, indicator_list):
         # this method must be overidden by subclasses
@@ -154,8 +135,6 @@ class RookCard(_Card):
         self.texture_id = TextureIndices.rook_card
 
     def activate(self, indicator_list):
-        def move(new_x, new_y):
-            return lambda: (self.owner.move(Coordinate(new_x, new_y)))
 
         moves = []
         # south
@@ -176,12 +155,11 @@ class RookCard(_Card):
         moves.append(Position((-2, 0), ([(-1, 0)], [(-2, 0)])))
         moves.append(Position((-3, 0), ([(-1, 0)], [(-2, 0)], [(-3, 0)])))
         if self.owner is not None:
-            for _move in moves:
-                valid_move = self.validate_move(_move)
+            for move in moves:
+                valid_move = self.validate_move(move)
                 if valid_move is not None:
-                    x, y = valid_move
                     indicator_list.append(
-                        Indicator(x, y, TextureIndices.move_indicator, move(x, y)))
+                        Indicator(valid_move, TextureIndices.move_indicator, self._move(valid_move)))
 
 
 class BishopCard(_Card):
@@ -190,8 +168,8 @@ class BishopCard(_Card):
         self.texture_id = TextureIndices.bishop_card
 
     def activate(self, indicator_list):
-        def move(new_x, new_y):
-            return lambda: (self.owner.move(Coordinate(new_x, new_y)))
+        def move(coordinate):
+            return lambda: (self.owner.move(coordinate))
 
         moves = []
         # Down Right
@@ -219,9 +197,8 @@ class BishopCard(_Card):
             for _move in moves:
                 valid_move = self.validate_move(_move)
                 if valid_move is not None:
-                    x, y = valid_move
                     indicator_list.append(
-                        Indicator(x, y, TextureIndices.move_indicator, move(x, y)))
+                        Indicator(valid_move, TextureIndices.move_indicator, self._move(valid_move)))
 
 
 class KnightCard(_Card):
@@ -250,9 +227,8 @@ class KnightCard(_Card):
             for _move in moves:
                 valid_move = self.validate_move(_move)
                 if valid_move is not None:
-                    x, y = valid_move
                     indicator_list.append(
-                        Indicator(x, y, TextureIndices.move_indicator, move(x, y)))
+                        Indicator(valid_move, TextureIndices.move_indicator, self._move(valid_move)))
 
 
 class LightningBoltCard(_Card):
@@ -262,17 +238,14 @@ class LightningBoltCard(_Card):
         self.damage = Damage('Lightning', 999)
 
     def activate(self, indicator_list):
-        def try_to_do_damage(x, y):
-            try:
-                for actor in self.owner.level.actors:
-                    if actor.coordinate.x == x and actor.coordinate.y == y:
-                        actor.take_damage(self.damage)
-                        # add logic to try to damage the spots around this one
-            except:
-                pass
+        def try_to_do_damage(coordinate):
+            for actor in self.owner.level.actors:
+                if actor.coordinate == coordinate:
+                    actor.take_damage(self.damage)
+                    # add logic to try to damage the spots around this one
 
-        def attack(x, y):
-            return lambda: try_to_do_damage(x, y)
+        def attack(coordinate):
+            return lambda: try_to_do_damage(coordinate)
 
         attack_position = []
         attack_position.append(Position((1, 1), ([(1, 1)], [(1, 1)])))
@@ -287,9 +260,8 @@ class LightningBoltCard(_Card):
             for positions in attack_position:
                 valid_position = self.validate_attack(positions)
                 if valid_position is not None:
-                    x, y = valid_position
                     indicator_list.append(
-                        Indicator(x, y, TextureIndices.move_indicator, attack(x, y)))
+                        Indicator(valid_position, TextureIndices.move_indicator, attack(valid_position)))
 
 
 class FireBallCard(_Card):
@@ -300,21 +272,21 @@ class FireBallCard(_Card):
 
     def activate(self, indicator_list):
 
-        def try_to_do_damage(x, y):
-            direction = self.get_direction(x, y)
+        def try_to_do_damage(coordinate):
+            direction = self.get_direction(coordinate)
             end = False
             while not end:
-                if self.owner.check_valid_attack(x, y):
+                if self.owner.check_valid_attack(coordinate):
                     for actor in self.owner.level.actors:
-                        if actor.coordinate.x == x and actor.coordinate.y == y:
+                        if actor.coordinate == coordinate:
                             actor.take_damage(self.damage)
                             end = True
-                    x, y = self.direction_move(x, y, direction)
+                    coordinate += direction
                 else:
                     end = True
 
-        def attack(x, y):
-            return lambda: try_to_do_damage(x, y)
+        def attack(coordinate):
+            return lambda: try_to_do_damage(coordinate)
 
         attack_position = []
         attack_position.append(Position((1, 0), ([(1, 0)], [(1, 0)])))
@@ -325,6 +297,5 @@ class FireBallCard(_Card):
             for positions in attack_position:
                 valid_position = self.validate_attack(positions)
                 if valid_position is not None:
-                    x, y = valid_position
                     indicator_list.append(
-                        Indicator(x, y, TextureIndices.move_indicator, attack(x, y)))
+                        Indicator(valid_position, TextureIndices.move_indicator, attack(valid_position)))
