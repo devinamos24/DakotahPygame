@@ -10,10 +10,10 @@ class _InputHandler:
     def __init__(self):
         self.bindings = {}
 
-    def handle_input(self, events) -> action._Action or None:
+    def handle_input(self, events) -> action.Action or None:
         pass
 
-    def bind_command(self, key, action: action._Action):
+    def bind_command(self, key, action: action.Action):
         self.bindings[key] = action
 
 
@@ -26,7 +26,7 @@ class PlayerInputHandler(_InputHandler):
         self.bind_command(pygame.K_DOWN, action.MoveAction(actor.Direction.S))
         self.bind_command(pygame.K_LEFT, action.MoveAction(actor.Direction.W))
 
-    def handle_input(self, events) -> action._Action or None:
+    def handle_input(self, events) -> action.Action or None:
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key in list(self.bindings.keys()):
@@ -42,7 +42,7 @@ class AIInputHandler(_InputHandler):
     def __init__(self):
         _InputHandler.__init__(self)
 
-    def handle_input(self, events) -> action._Action or None:
+    def handle_input(self, events) -> action.Action or None:
         move = random.randint(1, 4)
         if move == 1:
             return None
