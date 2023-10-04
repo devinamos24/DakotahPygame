@@ -1,3 +1,5 @@
+#level.py is the play area of the game, it keeps track of the stage, and actors
+
 import random
 
 from ..engine import gfxengine
@@ -7,8 +9,8 @@ from ..entities.input_handler import PlayerInputHandler, AIInputHandler
 from ..entities.actor import Player, Scarecrow
 from ..ui.hand import Hand
 
+#sets size of stage
 map_width, map_height = 15, 15
-
 
 class Level:
     def __init__(self):
@@ -17,6 +19,7 @@ class Level:
         self.actors = []
         self.Mod_Stage_Layer = []
 
+        #sets up the stage textures
         for i in range(map_height):
             self.Stage_Layer.append([0] * map_width)
             self.Mod_Stage_Layer.append([None] * map_width)
@@ -28,7 +31,6 @@ class Level:
             actor.update(events)
 
     def draw(self, screen):
-
         for y, row in enumerate(self.Stage_Layer):
             for x, tile_id in enumerate(row):
                 gfxengine.draw_on_grid(screen, tile_id, x, y)
@@ -111,6 +113,7 @@ class Level:
                 continue
             # Flip
             spawn_x, spawn_y = spawn_y, spawn_x
+        
         player = Player(spawn_x, spawn_y, self, PlayerInputHandler())
         self.player_hand = Hand(player)
         player.hand.add_card(RookCard())
