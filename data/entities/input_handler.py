@@ -26,6 +26,7 @@ class PlayerInputHandler(_InputHandler):
         self.bind_command(pygame.K_DOWN, action.MoveAction(actor.Direction.south))
         self.bind_command(pygame.K_LEFT, action.MoveAction(actor.Direction.west))
 
+    #handles keyboard inputs
     def handle_input(self, events) -> action._Action or None:
         for event in events:
             if event.type == pygame.KEYDOWN:

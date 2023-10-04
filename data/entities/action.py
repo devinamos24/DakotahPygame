@@ -15,6 +15,7 @@ class MoveAction(_Action):
         _Action.__init__(self)
         self.direction = direction
 
+    #check actors amount of energy to see if the action can be taken
     def execute(self, actor: _Actor):
         if actor.energy.current_energy > 0 and actor.move_cardinal(self.direction):
             actor.energy.remove_energy(1)

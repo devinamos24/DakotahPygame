@@ -24,12 +24,15 @@ class Level:
             self.Stage_Layer.append([0] * map_width)
             self.Mod_Stage_Layer.append([None] * map_width)
 
+        #unsure what this does
         self.move_buffer = []
 
+    #update actor
     def update(self, events):
         for actor in self.actors:
             actor.update(events)
 
+    #draws the stage then actors on top of stage, then finally the players hand
     def draw(self, screen):
         for y, row in enumerate(self.Stage_Layer):
             for x, tile_id in enumerate(row):
@@ -40,6 +43,7 @@ class Level:
 
         self.player_hand.draw(screen)
 
+    #create floor plan for the stage
     def generate_floor(self):
         self.Stage_Layer.clear()
 
@@ -79,11 +83,14 @@ class Level:
                 if num_walls >= 3:
                     self.Stage_Layer[y][x] = TextureIndices.wall
 
+    #spawns an enemy on a random unoccupied space
     def spawn_enemy_randomly(self, enemy_class):
         while True:
+            #randomly select an x and y for spawning
             spawn_x = random.randint(1, map_width-1)
             spawn_y = random.randint(1, map_height-1)
 
+            #Check each layer the make sure the selected x,y position is free
             if self.Stage_Layer[spawn_y][spawn_x] == 0:
                 if len([actor for actor in self.actors if actor.x == spawn_x and actor.y == spawn_y]) == 0:
                     enemy = enemy_class(spawn_x, spawn_y, self, AIInputHandler())
@@ -114,6 +121,8 @@ class Level:
             # Flip
             spawn_x, spawn_y = spawn_y, spawn_x
         
+        #when the player is spawned, creates player object, makes the player hand, adds cards to it
+        #then spawns two random enemies
         player = Player(spawn_x, spawn_y, self, PlayerInputHandler())
         self.player_hand = Hand(player)
         player.hand.add_card(RookCard())

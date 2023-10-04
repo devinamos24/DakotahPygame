@@ -44,12 +44,15 @@ class _Card:
         # move actor where you want it
         pass
 
-    # Check that the space is free of walls and actors
+    #the move and damage checks are separated if cards have different spaces for movement and attacks
+
+    # Check that the space is free of walls and actors for movement
     def validate_move(self, position: Position):
         try:
             x, y = position.move_position
             check_x = x + self.owner.x
             check_y = y + self.owner.y
+            #gets the list of valid move positions from the cards class to know where to check
             if not bool(self.owner.check_valid_move(check_x, check_y)):
                 def check_or_position():
                     for or_set in position.check_position:
@@ -76,7 +79,7 @@ class _Card:
             # nothing bad actually happened we just checked outside the map bounds
             pass
 
-    # Checks that space is free of walls
+    # Checks that space is free of walls and actors for attacks
     def validate_attack(self, position: Position):
         try:
             x, y = position.move_position
@@ -155,10 +158,10 @@ class RookCard(_Card):
         def move(new_x, new_y):
             return lambda: (self.owner.move(new_x, new_y))
 
+        # python doesnt like only having 1 position check and simplifies it thus messes with the data structure
         moves = []
         # south
-        moves.append(Position((0, 1), ([(0, 1)], [(0,
-                                                   1)])))  # python doesnt like only having 1 position check and simplifies it thus messes with the data structure
+        moves.append(Position((0, 1), ([(0, 1)], [(0, 1)])))
         moves.append(Position((0, 2), ([(0, 1)], [(0, 2)])))
         moves.append(Position((0, 3), ([(0, 1)], [(0, 2)], [(0, 3)])))
         # north
@@ -191,6 +194,7 @@ class BishopCard(_Card):
         def move(new_x, new_y):
             return lambda: (self.owner.move(new_x, new_y))
 
+        # python doesnt like only having 1 position check and simplifies it thus messes with the data structure
         moves = []
         # Down Right
         moves.append(Position((1, 1), ([(1, 1)], [(1, 0), [0, 1]])))
@@ -231,6 +235,7 @@ class KnightCard(_Card):
         def move(new_x, new_y):
             return lambda: (self.owner.move(new_x, new_y))
 
+        # python doesnt like only having 1 position check and simplifies it thus messes with the data structure
         moves = []
         # Down Right
         moves.append(Position((2, 1), ([(1, 0), (0, 1)], [(1, 1), (1, 0)], [(1, 1), (2, 0)])))
@@ -272,6 +277,7 @@ class LightningBoltCard(_Card):
         def attack(x, y):
             return lambda: try_to_do_damage(x, y)
 
+        # python doesnt like only having 1 position check and simplifies it thus messes with the data structure
         attack_position = []
         attack_position.append(Position((1, 1), ([(1, 1)], [(1, 1)])))
         attack_position.append(Position((-1, 1), ([(-1, 1)], [(-1, 1)])))
@@ -314,6 +320,7 @@ class FireBallCard(_Card):
         def attack(x, y):
             return lambda: try_to_do_damage(x, y)
 
+        # python doesnt like only having 1 position check and simplifies it thus messes with the data structure
         attack_position = []
         attack_position.append(Position((1, 0), ([(1, 0)], [(1, 0)])))
         attack_position.append(Position((-1, 0), ([(-1, 0)], [(-1, 0)])))

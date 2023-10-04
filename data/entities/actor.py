@@ -9,14 +9,14 @@ if TYPE_CHECKING:
     from data.entities.card import Damage
     from data.environment.level import Level
 
-
+#sets names for directions
 class Direction(IntEnum):
     north = 1
     east = 2
     south = 3
     west = 4
 
-
+#energy class to allow limiting actions per turn
 class Energy:
     def __init__(self, turn_energy: int):
         self.turn_energy = turn_energy
