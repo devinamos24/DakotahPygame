@@ -5,11 +5,13 @@ from sys import stderr
 from typing import Union, List
 import pygame
 
+#constint set up
 IMAGES_FORMAT = ".png"
 SCREEN_RESOLUTION = (640, 640)
 TILE_SIDES = 32
 HORIZONTAL_OFFSET = 80
 
+#gives a number for each texture
 @unique
 class TextureIndices(IntEnum):
     floor = 0
@@ -24,10 +26,10 @@ class TextureIndices(IntEnum):
     fire_ball = 9
     scarecrow = 10
 
-
+#sets up path (needs to be fixed to work be deafult on linux and windows)
 path = os.path.join("..", "resources")
 
-
+#gets teh sprite sheet and give each sprite its assigned texture name
 def load_sprite_sheet() -> List[pygame.Surface]:
     # Load the tileset image
     tileset_image = pygame.image.load(os.path.join(path, "tileset" + IMAGES_FORMAT))
