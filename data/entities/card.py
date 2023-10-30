@@ -148,7 +148,19 @@ class _Card:
     def check_click(self, x, y):
         pass
 
+"""
+when making move or attack sets with positons to be checked, the first numbers should be the actual location being looked at
+ex: Position((2, 1), ([(1, 0), (0, 1)], [(1, 1), (1, 0)], [(1, 1), (2, 0)]))
+the first set of numbers (2, 1) is the location actually being checked
+in the next array of numbers, we have the positions that need to be check to verify that looked at position
+is wanted to be used. positions in a bracket together [(1, 0), (0, 1)] are treated as an "or", as long as one is valid,
+it is seen as true. positions not bracketed together [(1, 0)], [(1, 1)] are treated as an "and", if one results in a false bool,
+the position will be unavalible to select from.
 
+python doesnt like having a single position check and will simplify it, so if you are only checking one position for
+a location, you will need to add the same position twice on the check side
+ex: Position((0, 1), ([(0, 1)], [(0, 1)]))
+"""
 class RookCard(_Card):
     def __init__(self):
         _Card.__init__(self, "rook", 1)
@@ -158,7 +170,6 @@ class RookCard(_Card):
         def move(new_x, new_y):
             return lambda: (self.owner.move(new_x, new_y))
 
-        # python doesnt like only having 1 position check and simplifies it thus messes with the data structure
         moves = []
         # south
         moves.append(Position((0, 1), ([(0, 1)], [(0, 1)])))
@@ -194,7 +205,6 @@ class BishopCard(_Card):
         def move(new_x, new_y):
             return lambda: (self.owner.move(new_x, new_y))
 
-        # python doesnt like only having 1 position check and simplifies it thus messes with the data structure
         moves = []
         # Down Right
         moves.append(Position((1, 1), ([(1, 1)], [(1, 0), [0, 1]])))
@@ -235,7 +245,6 @@ class KnightCard(_Card):
         def move(new_x, new_y):
             return lambda: (self.owner.move(new_x, new_y))
 
-        # python doesnt like only having 1 position check and simplifies it thus messes with the data structure
         moves = []
         # Down Right
         moves.append(Position((2, 1), ([(1, 0), (0, 1)], [(1, 1), (1, 0)], [(1, 1), (2, 0)])))
@@ -277,7 +286,6 @@ class LightningBoltCard(_Card):
         def attack(x, y):
             return lambda: try_to_do_damage(x, y)
 
-        # python doesnt like only having 1 position check and simplifies it thus messes with the data structure
         attack_position = []
         attack_position.append(Position((1, 1), ([(1, 1)], [(1, 1)])))
         attack_position.append(Position((-1, 1), ([(-1, 1)], [(-1, 1)])))
@@ -294,7 +302,6 @@ class LightningBoltCard(_Card):
                     x, y = valid_position
                     indicator_list.append(
                         Indicator(x, y, TextureIndices.move_indicator, attack(x, y)))
-
 
 class FireBallCard(_Card):
     def __init__(self):
@@ -333,3 +340,19 @@ class FireBallCard(_Card):
                     x, y = valid_position
                     indicator_list.append(
                         Indicator(x, y, TextureIndices.move_indicator, attack(x, y)))
+
+class RefreshEnergyCard(_Card):
+    def __init__(self):
+        _Card.__init__(self, "refresh energy", 0)
+        self.texture_id = TextureIndices.refresh_energy_card
+
+    def activate(self, indicator_list):
+        self.owner.energy.add_energy(3)
+
+class EndTurn(_Card):
+    def __init__(self):
+        _Card.__init__(self, "end turn", 0)
+        self.texture_id = TextureIndices.end_turn
+
+    def activate(self, indicator_list):
+        self.owner.end_turn()

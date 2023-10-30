@@ -8,6 +8,7 @@ if TYPE_CHECKING:
     from data.entities.input_handler import _InputHandler
     from data.entities.card import Damage
     from data.environment.level import Level
+    from data.environment.turn_order import Turn_order
 
 #sets names for directions
 class Direction(IntEnum):
@@ -41,7 +42,7 @@ class Energy:
 # An actor is anything that can move around and interact with the world/level including the player
 class _Actor:
     def __init__(self, x: int, y: int, health: int, turn_energy: int, sprite_id: TextureIndices, level: "Level",
-                 input_handler: "_InputHandler"):
+                 input_handler: "_InputHandler", speed: int, turn_order):
         self.x = x
         self.y = y
         self.health = health
@@ -50,6 +51,8 @@ class _Actor:
         self.level = level
         self.input_handler = input_handler
         self.energy = Energy(turn_energy)
+        self.speed = speed
+        self.turn_order = turn_order
 
     def check_valid_move(self, x, y) -> bool or list:
         if self.level.Stage_Layer[y][x] != TextureIndices.wall:
@@ -100,14 +103,18 @@ class _Actor:
 
     def do_damage(self) -> "Damage" or None:
         return card.Damage("Physical", 1)
+    
+    def end_turn(self):
+        self.turn_order.next_turn()
 
     def die(self):
+        self.turn_order.remove_from_master(self)
         self.level.actors.remove(self)
 
     def give_hand(self, hand):
         self.hand = hand
 
-    def update(self, events):
+    def update(self, events, turn_order):
         action = self.input_handler.handle_input(events)
         if action is not None:
             action.execute(self)
@@ -120,9 +127,8 @@ class _Actor:
 
 
 class Player(_Actor):
-    def __init__(self, x: int, y: int, level: "Level",
-                 input_handler: "_InputHandler"):
-        _Actor.__init__(self, x, y, 10, 3, TextureIndices.player, level, input_handler)
+    def __init__(self, x: int, y: int, level: "Level", input_handler: "_InputHandler", speed: int, turn_order):
+        _Actor.__init__(self, x, y, 10, 3, TextureIndices.player, level, input_handler, speed, turn_order)
 
     def take_damage(self, damage: "Damage" or None):
         if damage is not None:
@@ -132,8 +138,8 @@ class Player(_Actor):
 
 
 class Scarecrow(_Actor):
-    def __init__(self, x: int, y: int, level: "Level", input_handler: "_InputHandler"):
-        _Actor.__init__(self, x, y, 5, 2, TextureIndices.scarecrow, level, input_handler)
+    def __init__(self, x: int, y: int, level: "Level", input_handler: "_InputHandler", speed: int, turn_order):
+        _Actor.__init__(self, x, y, 5, 2, TextureIndices.scarecrow, level, input_handler, speed, turn_order)
 
     def take_damage(self, damage: "Damage" or None):
         if damage is not None:

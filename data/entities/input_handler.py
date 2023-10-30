@@ -46,15 +46,15 @@ class AIInputHandler(_InputHandler):
     def handle_input(self, events) -> action._Action or None:
         move = random.randint(1, 4)
         if move == 1:
-            return None
-            #return action.MoveAction(actor.Direction.north)
+            #return None
+            return action.MoveAction(actor.Direction.north)
         if move == 2:
-            return None
-            #return action.MoveAction(actor.Direction.east)
+            #return None
+            return action.MoveAction(actor.Direction.east)
         if move == 3:
-            return None
-            #return action.MoveAction(actor.Direction.south)
+            #return None
+            return action.MoveAction(actor.Direction.south)
         if move == 4:
-            return None
-            #return action.MoveAction(actor.Direction.west)
+            #return None
+            return action.MoveAction(actor.Direction.west)
         raise Exception

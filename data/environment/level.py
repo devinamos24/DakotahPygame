@@ -4,10 +4,11 @@ import random
 
 from ..engine import gfxengine
 from ..engine.gfxengine import TextureIndices
-from ..entities.card import RookCard, BishopCard, KnightCard, LightningBoltCard, FireBallCard
+from ..entities.card import RookCard, BishopCard, KnightCard, LightningBoltCard, FireBallCard, RefreshEnergyCard, EndTurn
 from ..entities.input_handler import PlayerInputHandler, AIInputHandler
 from ..entities.actor import Player, Scarecrow
 from ..ui.hand import Hand
+from..environment.turn_order import Turn_order
 
 #sets size of stage
 map_width, map_height = 15, 15
@@ -18,6 +19,7 @@ class Level:
         self.Stage_Layer = [TextureIndices]
         self.actors = []
         self.Mod_Stage_Layer = []
+        self.turn_order = Turn_order()
 
         #sets up the stage textures
         for i in range(map_height):
@@ -29,8 +31,10 @@ class Level:
 
     #update actor
     def update(self, events):
-        for actor in self.actors:
-            actor.update(events)
+        actor = self.turn_order.get_modded_turn()
+        actor.update(events, self.turn_order)
+        #for actor in self.actors:
+        #    actor.update(events)
 
     #draws the stage then actors on top of stage, then finally the players hand
     def draw(self, screen):
@@ -93,9 +97,9 @@ class Level:
             #Check each layer the make sure the selected x,y position is free
             if self.Stage_Layer[spawn_y][spawn_x] == 0:
                 if len([actor for actor in self.actors if actor.x == spawn_x and actor.y == spawn_y]) == 0:
-                    enemy = enemy_class(spawn_x, spawn_y, self, AIInputHandler())
+                    enemy = enemy_class(spawn_x, spawn_y, self, AIInputHandler(), 4, (self.turn_order))
                     self.actors.append(enemy)
-                    return
+                    return enemy
 
     def spawn_player(self):
         # Set the player starting position
@@ -123,13 +127,21 @@ class Level:
         
         #when the player is spawned, creates player object, makes the player hand, adds cards to it
         #then spawns two random enemies
-        player = Player(spawn_x, spawn_y, self, PlayerInputHandler())
+        turnorder = self.turn_order
+        player = Player(spawn_x, spawn_y, self, PlayerInputHandler(), 9, turnorder)
         self.player_hand = Hand(player)
+        self.turn_order.add_to_master(player)
         player.hand.add_card(RookCard())
         player.hand.add_card(KnightCard())
         player.hand.add_card(BishopCard())
         player.hand.add_card(LightningBoltCard())
         player.hand.add_card(FireBallCard())
+        player.hand.add_card(RefreshEnergyCard())
+        player.hand.add_card(EndTurn())
         self.actors.append(player)
-        self.spawn_enemy_randomly(Scarecrow)
-        self.spawn_enemy_randomly(Scarecrow)
+        sc1 = self.spawn_enemy_randomly(Scarecrow)
+        sc2 = self.spawn_enemy_randomly(Scarecrow)
+        self.turn_order.add_to_master(sc1)
+        self.turn_order.add_to_master(sc2)
+
+

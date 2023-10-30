@@ -26,6 +26,7 @@ class TextureIndices(IntEnum):
     fire_ball = 9
     scarecrow = 10
     refresh_energy_card = 11
+    end_turn = 12
 
 #sets up path (needs to be fixed to work be deafult on linux and windows)
 path = os.path.join("resources")
