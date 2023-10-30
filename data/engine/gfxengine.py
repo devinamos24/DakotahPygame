@@ -25,9 +25,10 @@ class TextureIndices(IntEnum):
     lightning_bolt = 8
     fire_ball = 9
     scarecrow = 10
+    refresh_energy_card = 11
 
 #sets up path (needs to be fixed to work be deafult on linux and windows)
-path = os.path.join("..", "resources")
+path = os.path.join("resources")
 
 #gets teh sprite sheet and give each sprite its assigned texture name
 def load_sprite_sheet() -> List[pygame.Surface]:
